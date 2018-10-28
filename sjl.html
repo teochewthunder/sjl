@@ -1,0 +1,85 @@
+<html>
+	<head>
+		<title>Social Justice League</title>
+		<link rel="stylesheet" type="text/css" href="css/cards.css"> 
+		<link rel="stylesheet" type="text/css" href="css/placeholders.css"> 
+		<link rel="stylesheet" type="text/css" href="css/game.css"> 
+
+		<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<script src="js/config.js"></script>
+		<script src="js/cards.js"></script>
+		<script src="js/placeholders.js"></script>
+		<script src="js/players.js"></script>
+		<script src="js/game.js"></script>
+	</head>
+	<body>
+		<div id="content_container">
+			<div id="header">
+				<h1>SOCIAL JUSTICE LEAGUE</h1>
+				<p>
+					Round <span id="rounds">0</span> 
+					<button id="btnHelp">Help</button>
+					<button id="btnRound">Go! &#9658;</button>
+				</p> 
+			</div>
+
+			<br style="clear:both" />
+
+			<div id="bot_container">
+				<div class="details_wrapper">
+					<div class="info_wrapper">
+						<div class="infoName">BOT</div>
+						<div id="botWinner" class="infoWinner"></div>
+					</div>
+					
+					<div class="stat_wrapper">
+						<div class="statLabel">&#9734;</div>
+						<div id="botStatWokePoints" class="stat"></div>
+						<div class="statlabel">&#9825;</div>
+						<div id="botStatLikes" class="stat"></div>
+					</div>
+				</div>
+				<br style="clear:both" />
+				<div id="botStack" class="stack"></div>
+			</div>
+
+			<br style="clear:both" />
+
+			<div id="attackInfo_container">
+				<div id="attackInfo"></div>
+			</div>
+
+			<div id="player_container">
+				<div id="playerStack" class="stack"></div>
+				<br style="clear:both" />
+				<div class="details_wrapper">
+					<div class="info_wrapper">
+						<div class="infoName">PLAYER</div>
+						<div id="playerWinner" class="infoWinner"></div>
+					</div>
+					<div class="stat_wrapper">
+						<div class="statLabel">&#9734;</div>
+						<div id="playerStatWokePoints" class="stat"></div>
+						<div class="statLabel">&#9825;</div>
+						<div id="playerStatLikes" class="stat"></div>
+					</div>				
+				</div>
+
+				<br style="clear:both" />
+
+				<div class="deck_wrapper">
+					<div id="playerDeck" class="deck"></div>
+				</div>
+			</div>
+		</div>
+
+		<div id="screenOverlay">
+			<p>Click anywhere to close</p>
+			<div id="screenOverlay_contentwrapper">
+				<div id="screenOverlay_content"></div>
+			</div>
+		</div>
+	</body>
+</html>
