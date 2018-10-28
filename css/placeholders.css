@@ -1,0 +1,61 @@
+.stackSlot
+{
+	width: 65px;
+	height: 100px;
+	float: left;
+	outline: 1px solid #000000;
+	padding: 2px;
+	margin: 2px;
+}
+
+.deckSlot
+{
+	width: 200px;
+	height: 25px;
+	float: left;
+	margin-right: 0.5em;
+	margin-bottom: 0.5em;
+	background-color: #000000;
+}
+
+.attackInfoSlot
+{
+	width: 65px;
+	height: 46px;
+	float: left;
+	padding: 2px;
+	margin: 2px;
+}
+
+.deckSlot_card
+{
+	width: 175px;
+	height: 100%;
+	float: left;
+	cursor: pointer;
+}
+
+.deckSlot_buttons
+{
+	width: 25px;
+	height: 100%;
+	float: right;
+}
+
+.deckSlot_buttons button, .deckSlot_buttons span
+{
+	width: 25px;
+	height: 25px;
+	font-size: 0.8em;
+}
+
+.btnAddToStack[disabled=disabled]
+{
+	background-color: #444444;
+	border: 0px solid #444444;
+}
+
+#playerStack .stackSlot
+{
+	cursor: pointer;
+}

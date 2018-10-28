@@ -1,0 +1,205 @@
+.card
+{
+	font-family: arial;
+	color: #FFFFFF;
+	overflow: hidden;
+}
+
+.card_xs
+{
+	width: 100%;
+	height: 100%;
+	font-size: 10px;
+}
+
+.card_sm
+{
+	width: 65px;
+	height: 100px;
+	border-radius: 5px;
+	font-size: 3px;
+	margin: 0 auto 0 auto;
+}
+
+.card_lg
+{
+	width: 390px;
+	height: 600px;
+	border-radius: 10px;
+	font-size: 15px;
+	margin: 0 auto 0 auto;
+}
+
+.card_overlay
+{
+	width: 100%;
+	height: 100%;
+	background-color: rgba(10, 10, 10, 0.8);
+}
+
+.card_lg .title
+{
+	font-size: 2em;
+	font-weight: bold;
+	text-align: center;
+	font-variant: small-caps;
+	padding: 5px;
+	height: 1.5em;
+}
+
+.card_lg .subTitle
+{
+	font-size: 1em;
+	font-style: italic;
+	text-align: center;
+	margin-top: -1em;
+	padding: 5px;
+}
+
+.card_lg .gameStats
+{
+	padding: 5px;
+}
+
+.card_lg .attdef
+{
+	font-size: 2em;
+	float: left;
+	width: 50%;
+}
+
+.card_lg .attdef span
+{
+	font-size: 1em;
+	font-weight: bold;
+	line-height: 0.5em;
+}
+
+.card_lg .card_statLabel
+{
+	width: 20%;
+	float: left;
+	font-size: 0.8em;
+}
+
+.card_lg .card_stat
+{
+	width: 80%;
+	float: left;
+}
+
+.card_lg .wokeRating
+{
+	font-size: 5em;
+	font-weight: bold;
+	float: right;
+	margin-top: -0.2em;
+	width: 50%;
+	text-align: right;
+}
+
+.card_lg .details
+{
+	font-size: 1em;
+	height: 65%;
+	padding: 5px;
+}
+
+.card_lg .otherDetails
+{
+	font-size: 0.8em;
+	padding: 5px;
+}
+
+.card_sm .title
+{
+	font-size: 2.5em;
+	font-weight: bold;
+	text-align: center;
+	font-variant: small-caps;
+	height: 6em;
+	padding: 1em;
+}
+
+.card_sm .gameStats
+{
+	font-size: 2em;
+	height: 6em;
+	padding: 1em;
+}
+
+.card_sm .wokeRating
+{
+	font-size: 3em;
+	font-weight: bold;
+	float: right;
+}
+
+.card_sm .attdef
+{
+	font-size: 1.5em;
+	float: left;
+}
+
+.card_sm .card_statLabel
+{
+	width: 50%;
+	float: left;
+	font-size: 0.8em;
+}
+
+.card_sm .card_stat
+{
+	width: 50%;
+	float: left;
+}
+
+.card_sm .subTitle, .card_sm .details, .card_sm .otherDetails
+{
+	display: none;
+}
+
+.card_xs .title
+{
+	width: 50%;
+	height: 100%;
+	font-size: 1em;
+	font-weight: bold;
+	text-align: left;
+	float:left;
+	font-variant: small-caps;
+	padding: 1px;
+}
+
+.card_xs .wokeRating
+{
+	width: 20%;
+	height: 100%;
+	font-size: 2em;
+	font-weight: bold;
+	float: left;
+	margin-top: 0em;
+}
+
+.card_xs .attdef
+{
+	width: 25%;
+	height: 100%;
+	font-size: 1.2em;
+	line-height: 1em;
+	margin-top: 0em;
+	float: right;
+}
+
+.card_xs .card_statLabel
+{
+	width: 30%;
+	float: left;
+	font-size: 0.8em;
+}
+
+.card_xs .card_stat
+{
+	width: 70%;
+	float: left;
+}
