@@ -2,6 +2,9 @@ var game =
 {
 	round: 0,
 	winner: null,
+	turnAttacker: "bot",
+	turnIndex: -1,
+	paused: true,
 	openOverlay: function(content)
 	{
 		$("#screenOverlay").show();
@@ -89,6 +92,131 @@ var game =
 	{
 		$("#attackInfo").html("&nbsp;");
 	},
+	renderAttackSequence: function()
+	{
+		$("#attackInfo").html("");
+
+		for (var i = 0; i < botHand.maxCards; i++)
+		{
+			var slot = $("<div></div>");
+			slot.addClass("attackInfoSlot");
+			slot.attr("id", "attackSlot_" + i) ;
+
+			if (i == game.turnIndex)
+			{
+				var slotContent = $("<span></span>");
+				var symbol = (this.turnAttacker == "bot" ? "\u25bc" : "\u25b2");
+				slotContent.html(symbol);
+				slot.append(slotContent);
+			}
+
+			$("#attackInfo").append(slot);
+		}
+	},
+	startRound: function()
+	{
+		this.paused = true;
+		playerDeck.enableButtons();
+		this.round++;
+
+		$(playerDeck.cards).each
+		(
+			function (index)
+			{
+				if (playerDeck.cards[index].turnsToLive > 0)
+				{
+					playerDeck.cards[index].onEditTurnsToLive(-1);
+				}
+			}
+		);
+
+		$(botDeck.cards).each
+		(
+			function (index)
+			{
+				if (botDeck.cards[index].turnsToLive > 0)
+				{
+					botDeck.cards[index].onEditTurnsToLive(-1);
+				}
+			}
+		);
+
+		game.nextTurn();
+		game.startTurn();
+	},
+	startTurn: function()
+	{
+		if (this.turnIndex >= 0)
+		{
+			if (this.turnAttacker == "player")
+			{
+				if (playerHand.cards[this.turnIndex] == null)
+				{
+					game.nextTurn();
+					game.startTurn();
+				}
+				else
+				{
+					playerHand.cards[this.turnIndex].roundSpecial();
+					playerHand.cards[this.turnIndex].onAttack(this.turnIndex);					
+				}
+			}
+
+			if (this.turnAttacker == "bot")
+			{
+				if (botHand.cards[this.turnIndex] == null)
+				{
+					game.nextTurn();
+					game.startTurn();
+				}
+				else
+				{
+					botHand.cards[this.turnIndex].roundSpecial();
+					botHand.cards[this.turnIndex].onAttack(this.turnIndex);					
+				}
+			}
+		}
+		else
+		{
+			this.paused = false;
+		}
+	},
+	nextTurn: function()
+	{
+		console.log(this.round,this.turnAttacker,this.turnIndex);
+
+		if (this.turnAttacker == "bot")
+		{
+			if (this.turnIndex == -1)
+			{
+				this.turnIndex ++;
+			}
+			else
+			{
+				if (this.turnIndex == botHand.cards.length - 1)
+				{
+					this.turnIndex = 0;
+					this.turnAttacker = "player";
+				}
+				else
+				{
+					this.turnIndex++;
+				}				
+			}
+		}
+		else
+		{
+			if (this.turnIndex == playerHand.cards.length - 1)
+			{
+				this.turnIndex = -1;
+				this.turnAttacker = "bot";
+			}
+			else
+			{
+				this.turnIndex++;
+			}
+		}
+	}
 }
 
 $(document).ready(function() {
@@ -101,26 +229,25 @@ $(document).ready(function() {
 
 	$(cardTemplates).each
 	(
-		function (x)
+		function (index)
 		{
-			cardTemplates[x].init();
-			playerDeck.addCard(Object.assign({}, cardTemplates[x]));
-			botDeck.addCard(Object.assign({}, cardTemplates[x]));
+			cardTemplates[index].init();
+			cardTemplates[index].owner = "player";
+			playerDeck.addCard(Object.assign({}, cardTemplates[index]));
+			cardTemplates[index].owner = "bot";
+			botDeck.addCard(Object.assign({}, cardTemplates[index]));
 		}
 	);
 
 	//render placeholders
 	playerDeck.render();
 
-	//render decks
-	playerDeck.renderCards();
-
-	//render stacks
-	playerStack.render();
-	botStack.render();
+	//render hands
+	playerHand.render();
+	botHand.render();
 
 	//button handlers
-	$(".btnAddToStack").click
+	$(".btnAddToHand").click
 	(
 		function(e)
 		{
@@ -128,9 +255,7 @@ $(document).ready(function() {
 
 			if (i < playerDeck.cards.length)
 			{
-				playerDeck.playCard(playerDeck.cards[i]);
-
-				//$("#playerDeck_" + i).hide();				
+				playerDeck.playCard(playerDeck.cards[i]);			
 			}
 		}
 	)
@@ -151,7 +276,7 @@ $(document).ready(function() {
 		}
 	)
 
-	$("#playerStack .stackSlot").click
+	$("#playerHand .handSlot").click
 	(
 		function(e)
 		{
@@ -159,22 +284,21 @@ $(document).ready(function() {
 			{
 				var i = e.currentTarget.dataset.index;
 
-				if (i < playerStack.cards.length)
+				if (i < playerHand.cards.length)
 				{
-					if (playerStack.cards[i] != null)
+					if (playerHand.cards[i] != null)
 					{
-						player.onEditWokePoints(playerStack.cards[i].wokeRating);	
-						playerStack.removeCard(playerStack.cards[i].id);
-						playerStack.compactCards();
-						playerStack.renderCards();			
+						player.onEditWokePoints(playerHand.cards[i].wokeRating);	
+						playerHand.removeCard(playerHand.cards[i].id);
+						playerHand.compactCards();
+						playerHand.renderCards();			
 					}
 				}				
 			}
 		}
 	)
 
-	//interface
-	$("#btnHelp").click
+	$("#btnCardSummary").click
 	(
 		function(e)
 		{
@@ -182,11 +306,20 @@ $(document).ready(function() {
 		}
 	)
 
-	//typical round code
+	//init
 	$("#botStatWokePoints").html(bot.wokePoints);
 	$("#botStatLikes").html(bot.likes);
 	$("#playerStatWokePoints").html(player.wokePoints);
 	$("#playerStatLikes").html(player.likes);
-	botDeck.fillStack();
-	game.hideProcessingMessage();
+	game.showProcessingMessage("Generating bot hand...", "loading.gif");
+	botDeck.playRandomCard();
+
+	//start
+	$("#btnRound").click
+	(
+		function(e)
+		{
+			game.startRound();
+		}
+	)
 });

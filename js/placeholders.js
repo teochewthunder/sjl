@@ -45,7 +45,7 @@ var objPlaceholder =
 		var card = this.cards.filter
 		(
 			function(x) 
-			{ 
+			{
 				return x.id == id; 
 			}	
 		)
@@ -72,7 +72,7 @@ var objPlaceholder =
 	renderCards: function() {},
 	render: function() {},
 	playCard: function() {},
-	stackGlow: function (objName, context)
+	handGlow: function (objName, context)
 	{
 		$("#" + objName).animate
 		(
@@ -102,30 +102,30 @@ var playerDeck = Object.assign({}, objPlaceholder);
 playerDeck.maxCards = 42;
 playerDeck.cards = [];
 
-var playerStack = Object.assign({}, objPlaceholder);
-playerStack.maxCards = 10;
-playerStack.cards = [];
+var playerHand = Object.assign({}, objPlaceholder);
+playerHand.maxCards = 10;
+playerHand.cards = [];
 
 var botDeck = Object.assign({}, objPlaceholder);
 botDeck.maxCards = 42;
 botDeck.cards = [];
 
-var botStack = Object.assign({}, objPlaceholder);
-botStack.maxCards = 10;
-botStack.cards = [];
+var botHand = Object.assign({}, objPlaceholder);
+botHand.maxCards = 10;
+botHand.cards = [];
 
-playerStack.render = function()
+playerHand.render = function()
 {
-	$("#playerStack").html("");
+	$("#playerHand").html("");
 
 	for (i = 0; i < this.maxCards; i++)
 	{
 		var container = $("<div></div>");
-		container.attr("id", "playerStack_" + i);
+		container.attr("id", "playerHand_" + i);
 		container.attr("data-index", i);
-		container.addClass("stackSlot");
+		container.addClass("handSlot");
 
-		$("#playerStack").append(container);
+		$("#playerHand").append(container);
 	}
 }
 
@@ -153,10 +153,11 @@ playerDeck.render = function()
 		span.append(span);
 
 		var button = $("<button></button>");
-		button.attr("id", "btnAddToStack_" + i);
+		button.attr("id", "btnAddToHand_" + i);
 		button.attr("data-index", i);
 		button.html("\u25b2");
-		button.addClass("btnAddToStack");
+		button.addClass("btnAddToHand");
+		button.attr("disabled", "disabled");
 		buttons.append(button);
 
 		container.append(buttons);
@@ -176,21 +177,21 @@ playerDeck.enableButtons = function()
 	(
 		function (index)
 		{
-			$("#btnAddToStack_" + index).hide();
+			$("#btnAddToHand_" + index).hide();
 			$("#ttl_" + index).hide();
 
-			if (playerStack.findCardById(playerDeck.cards[index].id).length == 0 && playerDeck.cards[index].wokeRating <= player.wokePoints)
+			if (playerHand.findCardById(playerDeck.cards[index].id).length == 0 && playerDeck.cards[index].wokeRating <= player.wokePoints)
 			{
-				$("#btnAddToStack_" + index).removeAttr("disabled");
+				$("#btnAddToHand_" + index).removeAttr("disabled");
 			}
 			else
 			{
-				$("#btnAddToStack_" + index).attr("disabled", "disabled");
+				$("#btnAddToHand_" + index).attr("disabled", "disabled");
 			}
 
 			if (playerDeck.cards[index].turnsToLive == 0)
 			{
-				$("#btnAddToStack_" + index).show();
+				$("#btnAddToHand_" + index).show();
 			}
 			else
 			{
@@ -200,17 +201,17 @@ playerDeck.enableButtons = function()
 	);		
 };
 
-playerStack.renderCards = function()
+playerHand.renderCards = function()
 {
 	for (i = 0; i < this.maxCards; i++)
 	{
-		var cardSlot = $("#playerStack_" + i);
+		var cardSlot = $("#playerHand_" + i);
 		cardSlot.html("");
 	}
 
 	for (i = 0; i < this.maxCards; i++)
 	{
-		var cardSlot = $("#playerStack_" + i);
+		var cardSlot = $("#playerHand_" + i);
 
 		if (i < this.cards.length)
 		{
@@ -221,7 +222,7 @@ playerStack.renderCards = function()
 
 	if (game.round == 0 )
 	{
-		if (playerStack.cards.length > 0)
+		if (playerHand.cards.length > 0)
 		{
 			game.showProcessingMessage("Click on any of the cards to unassign and return them to your deck. &#9660;", "");
 		}
@@ -231,6 +232,28 @@ playerStack.renderCards = function()
 		}
 	}
 };
+
+playerHand.showEditDefence = function(index, pts)
+{
+	var slot = $("#playerHand_" + index + " .card");
+	var overlay = $("<div></div>");
+	overlay.addClass("handOverlay");
+	overlay.html(Math.abs(pts));
+	slot.append(overlay);
+
+	overlay.animate
+	(
+		{
+			color: config.getContextColor(pts),
+			height: "120%"
+		}, 
+		500, 
+		function() 
+		{
+			overlay.hide();
+		}
+	);
+}
 
 playerDeck.renderCards = function()
 {
@@ -257,29 +280,29 @@ playerDeck.playCard = function (card)
 {
 	//render
 	player.onEditWokePoints(-card.wokeRating);
-	playerStack.addCard(card);
-	playerStack.renderCards();
+	playerHand.addCard(card);
+	playerHand.renderCards();
 	playerDeck.renderCards();
 
-	playerStack.stackGlow("playerStack_" + (playerStack.cards.length - 1), "positive");
+	playerHand.handGlow("playerHand_" + (playerHand.cards.length - 1), 1);
 
 	if (game.round > 0)
 	{
-
+		card.playSpecial();		
 	}
 };
 
-botStack.renderCards = function()
+botHand.renderCards = function()
 {
 	for (i = 0; i < this.maxCards; i++)
 	{
-		var cardSlot = $("#botStack_" + i);
+		var cardSlot = $("#botHand_" + i);
 		cardSlot.html("");
 	}
 
 	for (i = 0; i < this.maxCards; i++)
 	{
-		var cardSlot = $("#botStack_" + i);
+		var cardSlot = $("#botHand_" + i);
 
 		if (i < this.cards.length)
 		{
@@ -289,94 +312,115 @@ botStack.renderCards = function()
 	}	
 };
 
-botStack.render = function()
+botHand.render = function()
 {
-	$("#botStack").html("");
+	$("#botHand").html("");
 
 	for (i = 0; i < this.maxCards; i++)
 	{
 		var container = $("<div></div>");
-		container.attr("id", "botStack_" + i);
+		container.attr("id", "botHand_" + i);
 		container.attr("data-index", i);
-		container.addClass("stackSlot");
+		container.addClass("handSlot");
 
-		$("#botStack").append(container);
+		$("#botHand").append(container);
 	}
 };
 
+botHand.showEditDefence = function(index, pts)
+{
+	var slot = $("#botHand_" + index + " .card");
+	var overlay = $("<div></div>");
+	overlay.addClass("handOverlay");
+	overlay.html(Math.abs(pts));
+	slot.append(overlay);
+
+	overlay.animate
+	(
+		{
+			color: config.getContextColor(pts),
+			height: "80%"
+		}, 
+		500, 
+		function() 
+		{
+			overlay.hide();
+		}
+	);
+}
+
 botDeck.playRandomCard = function ()
 {
-	var stackCardIds = [];
+	var handCardIds = [];
 
-	$(botStack.cards).each
+	$(botHand.cards).each
 	(
 		function (x)
 		{
-			stackCardIds.push(botStack.cards[x].id);
+			handCardIds.push(botHand.cards[x].id);
 		}
 	);
 
-	var availableToPlay = [];
+	var availableToPlay = this.getAvailableCards(handCardIds);
 
-	$(botDeck.cards).each
-	(
-		function (x)
-		{
-			if (botDeck.cards[x].turnsToLive == 0 && botDeck.cards[x].wokeRating <= bot.wokePoints && stackCardIds.indexOf(botDeck.cards[x].id) == -1)
-			{
-				availableToPlay.push(botDeck.cards[x].id);
-			}
-		}
-	);
-
-	if (availableToPlay.length == 0)
+	if (availableToPlay.length > 0)
 	{
-		return false;
+		game.pause = true;
+		var added = false;
+
+		var i = config.generateRandomNo(0, availableToPlay.length -1);
+		var id = availableToPlay[i];
+
+		if (handCardIds.indexOf(id) == -1)
+		{
+			botDeck.playCard(botDeck.findCardById(id));
+		}	
 	}
 	else
 	{
-		var added = false;
-
-		do
-		{
-			var i = config.generateRandomNo(0, availableToPlay.length -1);
-			var id = availableToPlay[i];
-
-			if (stackCardIds.indexOf(id) == -1)
-			{
-				botDeck.playCard(botDeck.findCardById(id));
-				added = true;
-			}
-
-		} while (!added);
-
-		return added;		
+		game.pause = false;
+		game.hideProcessingMessage();
+		playerDeck.renderCards();
 	}
 };
 
 botDeck.playCard = function (card)
 {
 	bot.onEditWokePoints(-card.wokeRating);
-	botStack.addCard(card);
-	botStack.renderCards();
+	botHand.addCard(card);
+	botHand.renderCards();
 
-	botStack.stackGlow("botStack_" + (botStack.cards.length - 1), "positive");
-};
+	botHand.handGlow("botHand_" + (botHand.cards.length - 1), 1);
 
-botDeck.fillStack = function ()
-{
-	var done = false;
-
-	while (!done)
+	if (game.round > 0)
 	{
-		if (botStack.cards.length < botStack.maxCards)
-		{
-			var op = botDeck.playRandomCard();
-			done = (op ? false : true);
-		} 
-		else
-		{
-			done = true;
-		}
+		card.playSpecial();		
 	}
+
+	setTimeout
+	(
+		function()
+		{
+			botDeck.playRandomCard();
+		},
+		1000
+	)	
 };
+
+botDeck.getAvailableCards = function (cardIds)
+{
+	var availableToPlay = [];
+
+	$(botDeck.cards).each
+	(
+		function (x)
+		{
+			if (botDeck.cards[x].turnsToLive == 0 && botDeck.cards[x].wokeRating <= bot.wokePoints && cardIds.indexOf(botDeck.cards[x].id) == -1)
+			{
+				availableToPlay.push(botDeck.cards[x].id);
+			}
+		}
+	);	
+
+	return availableToPlay;
+}

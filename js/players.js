@@ -35,7 +35,7 @@ player.onEditWokePoints = function (pts)
 	$("#playerStatWokePoints").animate
 	(
 		{
-			color: config.getContextColor(pts <= 0 ? "negative" : "positive"),
+			color: config.getContextColor(pts),
 		}, 
 		100, 
 		function() 
@@ -67,7 +67,7 @@ player.onEditLikes = function (pts)
 	$("#playerStatLikes").animate
 	(
 		{
-			color: config.getContextColor(pts <= 0 ? "negative" : "positive"),
+			color: config.getContextColor(pts),
 		}, 
 		100, 
 		function() 
@@ -96,7 +96,7 @@ bot.onEditWokePoints = function (pts)
 	$("#botStatWokePoints").animate
 	(
 		{
-			color: config.getContextColor(pts <= 0 ? "negative" : "positive"),
+			color: config.getContextColor(pts),
 		}, 
 		100, 
 		function() 
@@ -128,7 +128,7 @@ bot.onEditLikes = function (pts)
 	$("#botStatLikes").animate
 	(
 		{
-			color: config.getContextColor(pts <= 0 ? "negative" : "positive"),
+			color: config.getContextColor(pts),
 		}, 
 		100, 
 		function() 

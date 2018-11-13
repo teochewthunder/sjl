@@ -1,6 +1,7 @@
 var objCard = 
 {
 	id: "",
+	owner: "",
 	title: "",
 	subTitle: "",
 	details: "",
@@ -13,36 +14,212 @@ var objCard =
 	newDefence: 0,
 	wokeRating: 0,
 	turnsToLive: 0,
-	onDestroy: function() {},
-	onAttack: function() {},
-	onPlay: function() {},
-	editAttack: function(val) 
+	onDestroy: function(placeholder) 
 	{
-		//code here
-	},
-	editDefence: function(val) 
-	{
-		//code here
-	},
-	editTurnsToLive: function(val) 
-	{
-		//code here
-	},
-	attack: function(cb) 
-	{
-		//code here
-	},
-	destroy: function(cb) 
-	{
-		//code here
-	},
-	play: function(cb) 
-	{
-		if (game.round > 0)
-		{
+		var card = this;
+		//obtain placeholder
+		var cardContents = placeholder.split(" ");
+		cardContents = cardContents[0] + " .card";
 
+		if (game.winner == null)
+		{
+			card.destroySpecial();
+
+			var index;
+			var temp = placeholder.split(" ");
+			temp = temp[0];
+			temp = temp.split("_");
+			index = parseInt(temp[1]);
+
+			if (placeholder.indexOf("botHand") == -1)
+			{
+				playerHand.handGlow("playerHand_" + index, -1);
+			}
+			else
+			{
+				botHand.handGlow("botHand_" + index, -1);
+			}	
+
+			$(cardContents).animate
+			(
+				{
+	    			opacity: 0,
+	  			}, 
+	  			500, 
+	  			function() 
+	  			{	
+	  				card.destroy(placeholder);
+	  			}
+	  		);
 		}
 	},
+	onAttack: function(index) 
+	{
+		if (game.winner == null)
+		{
+			this.attackSpecial(index);
+			this.attack(index);
+
+			game.renderAttackSequence();
+
+			$("#attackSlot_" + index + " span").animate
+			(
+				{
+	    			marginTop: (game.turnAttacker == "player" ? "0" : "50") + "%",
+	  			}, 
+	  			2000, 
+	  			function() 
+	  			{	
+	  				$("#attackSlot_" + index).html("");
+					game.nextTurn();
+					game.startTurn();
+	  			}
+	  		);
+		}
+	},
+	onEditAttack: function(pts, placeholder) 
+	{
+		if (game.winner == null)
+		{
+			this.editAttack(pts);	
+			//animate
+		}
+	},
+	onEditDefence: function(pts, placeholder) 
+	{
+		var card = this; 
+
+		if (game.winner == null)
+		{
+			$(placeholder).animate
+			(
+				{
+	    			color: config.getContextColor(pts),
+	  			}, 
+	  			100, 
+	  			function() 
+	  			{
+					$(placeholder).animate
+					(
+						{
+			    			color: "#FFFFFF",
+			  			}, 
+			  			500, 
+			  			function() 
+			  			{
+			  				$(placeholder).html(card.newDefence + pts < 0 ? 0 : card.newDefence + pts);
+			  				card.editDefence(pts, placeholder);
+			  			}
+			  		);
+	  			}
+	  		);
+		}
+	},
+	onEditTurnsToLive: function(pts) 
+	{
+		if (game.winner == null)
+		{
+			this.editTurnsToLive(pts);	
+			//animate
+		}
+	},
+	editAttack: function(pts) 
+	{
+		this.newAttack = this.newAttack + pts;	
+	},
+	editDefence: function(pts, placeholder) 
+	{
+		this.newDefence	= this.newDefence + pts;
+		var diff = this.newDefence;
+
+		if (this.newDefence <= 0)
+		{
+			this.newDefence = 0;
+			this.onDestroy(placeholder);
+		}	
+	},
+	editTurnsToLive: function(pts) 
+	{
+		this.turnsToLive = this.turnsToLive + pts;
+	},
+	attack: function(index) 
+	{
+		var damage = config.generateRandomNo(1, this.newAttack);
+
+		if (game.turnAttacker == "player")
+		{
+			if (index < botHand.cards.length)
+			{
+				if (botHand.cards[index] == null)
+				{
+					bot.onEditLikes(-damage);
+				}
+				else
+				{
+					console.log(this.id + " does " + damage + " damage to " + botHand.cards[index].id)
+					botHand.showEditDefence(index, -damage);
+					botHand.cards[index].onEditDefence(-damage, "#botHand_" + index + " .def_" + botHand.cards[index].id);
+					
+					if (botHand.cards[index].newDefence <= damage) 
+					{
+						player.onEditWokePoints(botHand.cards[index].wokeRating);
+					}	
+				}
+			}
+			else
+			{
+				bot.onEditLikes(-damage);
+			}
+		}
+
+		if (game.turnAttacker == "bot")
+		{
+			if (index < playerHand.cards.length)
+			{
+				if (playerHand.cards[index] == null)
+				{
+					player.onEditLikes(-damage);
+				}
+				else
+				{
+					console.log(this.id + " does " + damage + " damage to " + playerHand.cards[index].id)
+					playerHand.showEditDefence(index, -damage);
+					playerHand.cards[index].onEditDefence(-damage, "#playerHand_" + index + " .def_" + playerHand.cards[index].id);
+					
+					if (playerHand.cards[index].newDefence <= damage) 
+					{
+						bot.onEditWokePoints(playerHand.cards[index].wokeRating);
+					}	
+				}
+			}
+			else
+			{
+				player.onEditLikes(-damage);
+			}
+		}	
+	},
+	destroy: function(placeholder) 
+	{
+		//derive index from placeholder
+		var index;
+		var temp = placeholder.split(" ");
+		temp = temp[0];
+		temp = temp.split("_");
+		index = parseInt(temp[1]);
+
+		if (placeholder.indexOf("botHand") == -1)
+		{
+			playerHand.cards[index] = null;
+		}
+		else
+		{
+			botHand.cards[index] = null;
+		}		
+	},
+	destroySpecial: function() {},
+	attackSpecial: function(index) {},
+	playSpecial: function() {},
+	roundSpecial: function() {},
 	init: function()
 	{
 		this.newDefence = this.baseDefence;
@@ -159,13 +336,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -180,13 +357,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -201,13 +378,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -222,13 +399,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -243,13 +420,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -264,13 +441,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -285,13 +462,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -306,13 +483,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -327,13 +504,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -348,13 +525,13 @@ newCard.sexualOrientation = "Hetero";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -369,13 +546,13 @@ newCard.sexualOrientation = "LGBT";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -390,13 +567,13 @@ newCard.sexualOrientation = "LGBT";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -411,13 +588,13 @@ newCard.sexualOrientation = "LGBT";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -432,13 +609,13 @@ newCard.sexualOrientation = "LGBT";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -453,13 +630,13 @@ newCard.sexualOrientation = "LGBT";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.minor;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -474,13 +651,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -488,20 +665,20 @@ newCard = Object.assign({}, objCard);
 newCard.id = "snowflake";
 newCard.title = "Snowflake";
 newCard.subTitle = "";
-newCard.details = "If there is a Victim Card in your attack stack, add " + config.major + " to Base Attack.<br/><br />For every round the card is in the Safe Space, add " + config.minor + " Defence.";
+newCard.details = "If there is a Victim Card in your hand, add " + config.major + " to Base Attack.<br/><br />For every round the card is in the Safe Space, add " + config.minor + " Defence.";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.minor;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -516,13 +693,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.minor;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -537,13 +714,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.minor;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -558,13 +735,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.minor;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -579,34 +756,34 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.minor;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
 newCard = Object.assign({}, objCard);
-newCard.id = "flatearth";
-newCard.title = "Flat Earth Theory";
+newCard.id = "imisogyny";
+newCard.title = "Internalized Misogyny";
 newCard.subTitle = "";
 newCard.details = "";
 newCard.race = "Neutral";
-newCard.gender = "Neutral";
+newCard.gender = "Female";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.minor;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -622,13 +799,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.minor;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -636,20 +813,20 @@ newCard = Object.assign({}, objCard);
 newCard.id = "ptrophy";
 newCard.title = "Participation Trophy";
 newCard.subTitle = "Everyone gets a prize!";
-newCard.details = "Every round, all cards in the Attack Stack add " + config.minor + " to Defence.<br /><br />On destruction, add " + config.minor + " Likes.";
+newCard.details = "Every round, all cards in the hand add " + config.minor + " to Defence.<br /><br />On destruction, add " + config.minor + " Likes.";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.minor;
 newCard.baseDefence = config.minor;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -664,13 +841,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.minor;
 newCard.baseDefence = config.minor;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -685,13 +862,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -706,13 +883,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -727,13 +904,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -748,13 +925,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -769,13 +946,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -790,13 +967,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -811,13 +988,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -832,13 +1009,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -853,13 +1030,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -874,13 +1051,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -888,20 +1065,20 @@ newCard = Object.assign({}, objCard);
 newCard.id = "troll";
 newCard.title = "Troll";
 newCard.subTitle = "Get a reaction; <i>any</i> reaction";
-newCard.details = "Each round, inflict " + config.minor + " damage to the all cards.<br /><br />On play, instantly Trigger <i>Snowflake</i> card.<br /><br />If there is a <i>Keyboard Warrior</i> card in your Attack Stack, add " + config.medium + " to Base Attack.";
+newCard.details = "Each round, inflict " + config.minor + " damage to the all cards.<br /><br />On play, instantly Trigger <i>Snowflake</i> card.<br /><br />If there is a <i>Keyboard Warrior</i> card in your hand, add " + config.medium + " to Base Attack.";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.medium;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -916,13 +1093,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.minor;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.major;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -937,13 +1114,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.minor;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.major;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -958,13 +1135,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.minor;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.major;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -979,13 +1156,13 @@ newCard.sexualOrientation = "LGBT";
 newCard.baseAttack = config.minor;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.major;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -1000,13 +1177,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.minor;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
@@ -1021,13 +1198,13 @@ newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.minor;
 newCard.wokeRating = config.major;
-newCard.onDestroy = function()
+newCard.destroySpecial = function()
 {
-	this.destroyCard();
+	//this.destroyCard();
 };
-newCard.onAttack = function()
+newCard.attackSpecial = function()
 {
-	this.attackCard();
+	//this.attackCard();
 };
 cardTemplates.push(newCard);
 
