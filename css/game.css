@@ -48,9 +48,71 @@ body
 {
 	width: 100%;
 	height: 60px;
-	font-size: 10px;
+	font-size: 12px;
 	font-family: arial;
 	text-align: center;
+	color: #FFFFFF;
+	padding-top: 0.5em;
+}
+
+.helpButtons
+{
+	position: absolute;
+	right: 10;
+	top: 10;
+	text-align: center;
+	z-index: 1000;
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 10px;
+	padding: 1em;
+}
+
+.topbutton
+{
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 1em;
+	width: 1.2em;
+	height: 1.2em;
+	margin-right: 0.5em;
+	margin-left: 0.5em;
+	border-radius: 50%;
+	border: 2px solid #999999;
+	color: #999999;
+	text-align: center;
+	float: right;
+}
+
+.topbutton:hover
+{
+	color: #FFFFFF;
+	border: 2px solid #FFFFFF;
+}
+
+.greybutton
+{
+	cursor: pointer;
+	display: inline-block;
+	border-radius: 5px;
+	background-color: rgba(100, 100, 100, 0.5);
+	color: #999999;
+	padding: 5px;
+}
+
+.greybutton:hover
+{
+	background-color: rgba(100, 100, 100, 1);
+	color: #FFFFFF;
+}
+
+.greybuttonDisabled
+{
+	cursor: inherit;
+	display: inline-block;
+	border-radius: 5px;
+	background-color: rgba(100, 100, 100, 0.5);
+	color: #999999;
+	padding: 5px;
 }
 
 .deck_wrapper

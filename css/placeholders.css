@@ -30,12 +30,11 @@
 
 .deckSlot
 {
-	width: 200px;
-	height: 25px;
+	width: 100px;
+	height: 40px;
 	float: left;
-	margin-right: 0.5em;
+	margin-right: 1em;
 	margin-bottom: 0.5em;
-	background-color: #000000;
 }
 
 .attackInfoSlot
@@ -58,30 +57,51 @@
 
 .deckSlot_card
 {
-	width: 175px;
+	width: 75px;
 	height: 100%;
 	float: left;
+}
+
+.deckSlot_card .card
+{
 	cursor: pointer;
 }
 
-.deckSlot_buttons
+.cannotAddToHand .card .card_overlay
 {
-	width: 25px;
-	height: 100%;
+	background-color: rgba(255, 255, 255, 1);
+}
+
+.cannotAddToHand .card .card_overlay .wokeRating:after
+{
+	display: none;
+}
+
+.cannotAddToHand .card
+{
+	color: #000000;
+	cursor: inherit;
+}
+
+.btnInfo
+{
+	width: 10px;
+	height: 10px;
 	float: right;
+	text-align: center;
+	font-size: 0.58em;
+	font-weight: bold;
+	font-family: arial;
+	border-radius: 50%;
+	border: 1px solid #444444;
+	color: #444444;
+	cursor: pointer;
 }
 
-.deckSlot_buttons button, .deckSlot_buttons span
+.btnInfo:hover
 {
-	width: 25px;
-	height: 25px;
-	font-size: 0.8em;
-}
-
-.btnAddToHand[disabled=disabled]
-{
-	background-color: #444444;
-	border: 0px solid #444444;
+	border: 1px solid #FFFFFF;
+	color: #FFFFFF;
 }
 
 #playerHand .handSlot

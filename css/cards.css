@@ -7,9 +7,10 @@
 
 .card_xs
 {
-	width: 100%;
-	height: 100%;
-	font-size: 10px;
+	width: 26px;
+	height: 40px;
+	border-radius: 3px;
+	float: left;
 }
 
 .card_sm
@@ -130,28 +131,33 @@
 
 .card_sm .wokeRating
 {
+	width: 45%;
 	font-size: 3em;
 	font-weight: bold;
 	float: right;
+	text-align: right;
 }
 
 .card_sm .attdef
 {
+	width: 45%;
 	font-size: 1.5em;
 	float: left;
 }
 
 .card_sm .card_statLabel
 {
-	width: 50%;
+	width: 20%;
 	float: left;
 	font-size: 0.8em;
+	text-align: left;
 }
 
 .card_sm .card_stat
 {
-	width: 50%;
+	width: 70%;
 	float: left;
+	text-align: right;
 }
 
 .card_sm .subTitle, .card_sm .details, .card_sm .otherDetails
@@ -159,47 +165,94 @@
 	display: none;
 }
 
-.card_xs .title
+.card_xs_container
+{
+	width: 100%;
+	height: 100%;
+	font-size: 3px;
+	font-family: arial;
+}
+
+.card_xs_container .title
 {
 	width: 50%;
-	height: 100%;
-	font-size: 1em;
+	height: 3em;
+	font-size: 2.5em;
 	font-weight: bold;
 	text-align: left;
-	float:left;
+	float: left;
 	font-variant: small-caps;
-	padding: 1px;
+	padding: 2px;
+	color: #FFFFFF;
+}
+
+.card_xs_container .attdef
+{
+	width: 65%;
+	height: 2em;
+	font-size: 3em;
+	line-height: 1em;
+	margin-top: 0em;
+	float: right;
+	color: #FFFFFF;
+}
+
+.card_xs_container .card_statLabel
+{
+	width: 20%;
+	float: left;
+}
+
+.card_xs_container .card_stat
+{
+	width: 20%;
+	float: left;
 }
 
 .card_xs .wokeRating
 {
-	width: 20%;
+	width: 90%;
 	height: 100%;
+	font-size: 5em;
+	font-weight: bold;
+	text-align: center;
+	margin: 0 auto 0 auto;
+}
+
+.card_xs .wokeRating:before, .card_xs .wokeRating:after
+{
+	content: " ";
+	display: block;
+	width: 100%;
+	height: 30%;
+}
+
+.card_xs .wokeRating:after
+{
+	display: block;
+	content: "\25b2";
+	font-size: 0.6em;
+	text-align: left;
+}
+
+.card_xs .ttl
+{
+	width: 100%;
+	font-size: 3.5em;
+	font-weight: bold;
+	padding-top: 10%;
+	text-align: center;
+	color: #FF0000;
+}
+
+.card_xs .ttl:before
+{
+	display: block;
+	content: "\2620";
+	width: 100%;
+	height: 60%;
 	font-size: 2em;
 	font-weight: bold;
-	float: left;
-	margin-top: 0em;
-}
-
-.card_xs .attdef
-{
-	width: 25%;
-	height: 100%;
-	font-size: 1.2em;
-	line-height: 1em;
-	margin-top: 0em;
-	float: right;
-}
-
-.card_xs .card_statLabel
-{
-	width: 30%;
-	float: left;
-	font-size: 0.8em;
-}
-
-.card_xs .card_stat
-{
-	width: 70%;
-	float: left;
+	text-align: center;
+	color: #FF0000;
 }
