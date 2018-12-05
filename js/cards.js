@@ -58,31 +58,67 @@ var objCard =
 		if (game.winner == null)
 		{
 			this.attackSpecial(index);
-			this.attack(index);
+			this.attack(index, this.wokeRating);
 
 			game.renderAttackSequence();
+
+			var attacker = game.turnAttacker;
+
+			game.nextTurn();
 
 			$("#attackSlot_" + index + " span").animate
 			(
 				{
-	    			marginTop: (game.turnAttacker == "player" ? "0" : "50") + "%",
+	    			marginTop: (attacker == "player" ? "0" : "50") + "%",
 	  			}, 
 	  			2000, 
 	  			function() 
 	  			{	
 	  				$("#attackSlot_" + index).html("");
-					game.nextTurn();
-					game.startTurn();
+
+					if (game.turnIndex == -1) 
+					{
+						game.endRound();
+					}
+					else
+					{
+						game.startTurn();
+					}
 	  			}
 	  		);
 		}
 	},
 	onEditAttack: function(pts, placeholder) 
 	{
+		var card = this;
+
 		if (game.winner == null)
 		{
-			this.editAttack(pts);	
-			//animate
+			card.editAttack(pts);
+			$(placeholder).html(card.newAttack);	
+
+			$(placeholder).animate
+			(
+				{
+	    			color: config.getContextColor(pts),
+	  			}, 
+	  			100, 
+	  			function() 
+	  			{	
+					$(placeholder).animate
+					(
+						{
+			    			color: "#FFFFFF",
+			  			}, 
+			  			500, 
+			  			function() 
+			  			{
+			  				card.editAttack(-pts);
+			  				$(placeholder).html(card.newAttack);
+			  			}
+			  		);
+	  			}
+	  		);
 		}
 	},
 	onEditDefence: function(pts, placeholder) 
@@ -108,7 +144,13 @@ var objCard =
 			  			function() 
 			  			{
 			  				$(placeholder).html(card.newDefence + pts < 0 ? 0 : card.newDefence + pts);
-			  				card.editDefence(pts, placeholder);
+			  				card.editDefence(pts);
+
+							if (card.newDefence <= 0)
+							{
+								card.newDefence = 0;
+								card.onDestroy(placeholder);
+							}
 			  			}
 			  		);
 	  			}
@@ -127,23 +169,17 @@ var objCard =
 	{
 		this.newAttack = this.newAttack + pts;	
 	},
-	editDefence: function(pts, placeholder) 
+	editDefence: function(pts) 
 	{
-		this.newDefence	= this.newDefence + pts;
-		var diff = this.newDefence;
-
-		if (this.newDefence <= 0)
-		{
-			this.newDefence = 0;
-			this.onDestroy(placeholder);
-		}	
+		this.newDefence	= this.newDefence + pts;	
 	},
 	editTurnsToLive: function(pts) 
 	{
 		this.turnsToLive = this.turnsToLive + pts;
 	},
-	attack: function(index) 
+	attack: function(index, wokeRating) 
 	{
+		var card = this;
 		var damage = config.generateRandomNo(1, this.newAttack);
 
 		if (game.turnAttacker == "player")
@@ -156,14 +192,28 @@ var objCard =
 				}
 				else
 				{
-					console.log(this.id + " does " + damage + " damage to " + botHand.cards[index].id)
 					botHand.showEditDefence(index, -damage);
-					botHand.cards[index].onEditDefence(-damage, "#botHand_" + index + " .def_" + botHand.cards[index].id);
-					
-					if (botHand.cards[index].newDefence <= damage) 
+					botHand.cards[index].onEditDefence(-damage, "#botHand_" + index + " .def_" + botHand.cards[index].id);	
+
+					if (damage >= botHand.cards[index].newDefence)
 					{
-						player.onEditWokePoints(botHand.cards[index].wokeRating);
-					}	
+						botHand.cards[index].onEditTurnsToLive(card.wokeRating);
+
+						if (card.wokeRating == botHand.cards[index].wokeRating)
+						{
+							player.onEditWokePoints(config.minor); 
+						}
+
+						if ((card.wokeRating == config.minor && botHand.cards[index].wokeRating == config.medium) || (card.wokeRating == config.medium && botHand.cards[index].wokeRating == config.major))
+						{
+							player.onEditWokePoints(config.medium); 
+						}
+
+						if (card.wokeRating == config.minor && botHand.cards[index].wokeRating == config.major)
+						{
+							player.onEditWokePoints(config.major); 
+						}
+					}
 				}
 			}
 			else
@@ -182,14 +232,28 @@ var objCard =
 				}
 				else
 				{
-					console.log(this.id + " does " + damage + " damage to " + playerHand.cards[index].id)
 					playerHand.showEditDefence(index, -damage);
 					playerHand.cards[index].onEditDefence(-damage, "#playerHand_" + index + " .def_" + playerHand.cards[index].id);
-					
-					if (playerHand.cards[index].newDefence <= damage) 
+
+					if (damage >= playerHand.cards[index].newDefence)
 					{
-						bot.onEditWokePoints(playerHand.cards[index].wokeRating);
-					}	
+						playerHand.cards[index].onEditTurnsToLive(card.wokeRating);
+
+						if (card.wokeRating == playerHand.cards[index].wokeRating)
+						{
+							bot.onEditWokePoints(config.minor);
+						}
+
+						if ((card.wokeRating == config.minor && playerHand.cards[index].wokeRating == config.medium) || (card.wokeRating == config.medium && playerHand.cards[index].wokeRating == config.major))
+						{
+							bot.onEditWokePoints(config.medium);
+						}
+
+						if (card.wokeRating == config.minor && playerHand.cards[index].wokeRating == config.major)
+						{
+							bot.onEditWokePoints(config.major);
+						}
+					}
 				}
 			}
 			else
@@ -235,13 +299,16 @@ var objCard =
 		if (size == "xs")
 		{
 			var container = $("<div></div>");
-			container.addClass("card").addClass("card_xs");
-			container.attr("style","background: #999999 url(img/" + this.id + ".jpg) center center no-repeat; background-size: cover;");
+			container.addClass("card_xs_container");
+
+			var card = $("<div></div>");
+			card.addClass("card").addClass("card_xs");
+			card.attr("style","background: #999999 url(img/" + this.id + ".jpg) center center no-repeat; background-size: cover;");
 
 			var overlay = $("<div></div>");
 			overlay.addClass("card_overlay");
-			container.append(overlay);
-			
+			card.append(overlay);
+
 			var title = $("<div></div>");
 			title.addClass("title");
 			title.html(this.title);
@@ -249,6 +316,10 @@ var objCard =
 			var wokeRating = $("<div></div>");
 			wokeRating.addClass("wokeRating");
 			wokeRating.html(this.wokeRating);
+
+			var ttl = $("<div></div>");
+			ttl.addClass("ttl");
+			ttl.html(this.turnsToLive);
 
 			var attdef = $("<div></div>");
 			attdef.addClass("attdef");
@@ -258,10 +329,12 @@ var objCard =
 				+ "<div class=\"card_statLabel\">&#9960;</div> <div class=\"card_stat\">" + this.newDefence + "</div>"
 			);
 
-			overlay.append(title);
 			overlay.append(wokeRating);
-			overlay.append(attdef);
+			overlay.append(ttl);
 
+			container.append(card);
+			container.append(title);
+			container.append(attdef);
 			return container;
 		}
 		else
@@ -294,8 +367,8 @@ var objCard =
 			attdef.addClass("attdef");
 			attdef.html
 			(
-				"<div class=\"card_statLabel\">&#9876;</div> <div class=\"card_stat att_" + this.id + "\">" + this.baseAttack + "</div>"
-				+ "<div class=\"card_statLabel\">&#9960;</div> <div class=\"card_stat def_" + this.id + "\">" + this.newDefence + "</div>"
+				"<div class=\"card_statLabel\">&#9876;</div><div class=\"card_stat att_" + this.id + "\">" + this.baseAttack + "</div>"
+				+ "<br /><div class=\"card_statLabel\">&#9960;</div> <div class=\"card_stat def_" + this.id + "\">" + this.newDefence + "</div>"
 			);
 
 			var otherDetails = $("<div></div>");
@@ -328,34 +401,97 @@ var newCard;
 newCard = Object.assign({}, objCard);
 newCard.id = "wman";
 newCard.title = "White Man";
-newCard.subTitle = "The target of all cards";
-newCard.details = "";
+newCard.subTitle = "";
+newCard.details = "If there is a <b>Male</b> or <b>White</b> card beside this card in hand, add " + config.medium + " to <b>Base Attack</b> when attacking.";
 newCard.race = "White";
 newCard.gender = "Male";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
-newCard.destroySpecial = function()
+newCard.attackSpecial = function(index)
 {
-	//this.destroyCard();
-};
-newCard.attackSpecial = function()
-{
-	//this.attackCard();
+	var activate = false;
+
+	if (game.turnAttacker == "bot")
+	{
+		if (index > 0)
+		{
+			if (botHand.cards[index - 1] != null)
+			{
+				if (botHand.cards[index - 1].race == "White" || botHand.cards[index - 1].gender == "Male")
+				{
+					activate = true;
+				}				
+			}
+		}
+
+		if (index < botHand.cards.length - 1)
+		{
+			if (botHand.cards[index - 1] != null)
+			{
+				if (botHand.cards[index + 1].race == "White" || botHand.cards[index + 1].gender == "Male")
+				{
+					activate = true;
+				}				
+			}
+		}
+	}
+
+	if (game.turnAttacker == "player")
+	{
+		if (index > 0)
+		{
+			if (playerHand.cards[index - 1] != null)
+			{
+				if (playerHand.cards[index - 1].race == "White" || playerHand.cards[index - 1].gender == "Male")
+				{
+					activate = true;
+				}				
+			}
+		}
+
+		if (index < playerHand.cards.length - 1)
+		{
+			if (playerHand.cards[index + 1] != null)
+			{
+				if (playerHand.cards[index + 1].race == "White" || playerHand.cards[index + 1].gender == "Male")
+				{
+					activate = true;
+				}				
+			}
+		}		
+	}
+
+	if (activate)
+	{
+		var placeholder;
+
+		if (game.turnAttacker == "bot")
+		{
+			placeholder = "#botHand_" + index + " .att_" + this.id;
+		}
+
+		if (game.turnAttacker == "player")
+		{
+			placeholder = "#playerHand_" + index + " .att_" + this.id;
+		}
+
+		this.onEditAttack(config.medium, placeholder);
+	}
 };
 cardTemplates.push(newCard);
 
 newCard = Object.assign({}, objCard);
 newCard.id = "wwoman";
 newCard.title = "White Woman";
-newCard.subTitle = "I am woman, hear me roar.";
-newCard.details = "";
+newCard.subTitle = "";
+newCard.details = "If there is another <b>Female</b> or <b>White</b> card beside this card in hand, add " + config.medium + " to <b>Defence</b>.";
 newCard.race = "White";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -370,13 +506,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "hman";
 newCard.title = "Hispanic Man";
-newCard.subTitle = "Black, Hispanic, Asian, etc";
-newCard.details = "";
+newCard.subTitle = "";
+newCard.details = "If there is a <b>Male</b> or <b>Minority</b> card beside this card in hand, add " + config.medium + " to <b>Base Attack</b> when attacking.";
 newCard.race = "Minority";
 newCard.gender = "Male";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -391,13 +527,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "hwoman";
 newCard.title = "Hispanic Woman";
-newCard.subTitle = "Black, Hispanic, Asian, etc";
-newCard.details = "";
+newCard.subTitle = "";
+newCard.details = "Each round, if there is another <b>Female</b> or <b>Minority</b> card beside this card in hand, add " + config.medium + " to <b>Defence</b>.";
 newCard.race = "Minority";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -413,12 +549,12 @@ newCard = Object.assign({}, objCard);
 newCard.id = "bman";
 newCard.title = "Black Man";
 newCard.subTitle = "Black, Hispanic, Asian, etc";
-newCard.details = "";
+newCard.details = "If there is a <b>Male</b> or <b>Minority</b> card beside this card in hand, add " + config.medium + " to <b>Base Attack</b> when attacking.";
 newCard.race = "Minority";
 newCard.gender = "Male";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -433,13 +569,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "bwoman";
 newCard.title = "Black Woman";
-newCard.subTitle = "Black, Hispanic, Asian, etc";
-newCard.details = "";
+newCard.subTitle = "";
+newCard.details = "Each round, if there is another <b>Female</b> or <b>Minority</b> card beside this card in hand, add " + config.medium + " to <b>Defence</b>.";
 newCard.race = "Minority";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -454,13 +590,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "aman";
 newCard.title = "Asian Man";
-newCard.subTitle = "Black, Hispanic, Asian, etc";
-newCard.details = "";
+newCard.subTitle = "";
+newCard.details = "If there is a <b>Male</b> or <b>Minority</b> card beside this card in hand, add " + config.medium + " to <b>Base Attack</b> when attacking.";
 newCard.race = "Minority";
 newCard.gender = "Male";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -475,13 +611,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "awoman";
 newCard.title = "Asian Woman";
-newCard.subTitle = "Black, Hispanic, Asian, etc";
-newCard.details = "";
+newCard.subTitle = "";
+newCard.details = "Each round, if there is another <b>Female</b> or <b>Minority</b> card beside this card in hand, add " + config.medium + " to <b>Defence</b>.";
 newCard.race = "Minority";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -496,13 +632,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "naman";
 newCard.title = "Native American Man";
-newCard.subTitle = "Black, Hispanic, Asian, etc";
-newCard.details = "";
+newCard.subTitle = "";
+newCard.details = "If there is a <b>Male</b> or <b>Minority</b> card beside this card in hand, add " + config.medium + " to <b>Base Attack</b> when attacking.";
 newCard.race = "Minority";
 newCard.gender = "Male";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -517,13 +653,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "nawoman";
 newCard.title = "Native American Woman";
-newCard.subTitle = "Black, Hispanic, Asian, etc";
-newCard.details = "";
+newCard.subTitle = "";
+newCard.details = "Each round, if there is another <b>Female</b> or <b>Minority</b> card beside this card in hand, add " + config.medium + " to <b>Defence</b>.";
 newCard.race = "Minority";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Hetero";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -538,13 +674,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "transgender";
 newCard.title = "Transgender";
-newCard.subTitle = "Each round, gain " + config.minor + " Defence for every Male and Female card in your deck.";
-newCard.details = "xxxxxxxxxxxxxxxxx";
+newCard.subTitle = "";
+newCard.details = "Each round, if there is another <b>Female</b> card beside this card in hand, add " + config.medium + " to <b>Defence</b>.<br />If there is a <b>Male</b> card beside this card in hand, add " + config.minor + " to <b>Base Attack</b> when attacking.";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "LGBT";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -559,13 +695,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "gay";
 newCard.title = "Gay";
-newCard.subTitle = "I love other men.";
-newCard.details = "Each round, gain " + config.medium + " Defence for every Male card in your deck.";
+newCard.subTitle = "";
+newCard.details = "If there is another <b>Male</b> card in hand, add " + config.medium + " to <b>Base Attack</b> when attacking.";
 newCard.race = "Neutral";
 newCard.gender = "Male";
 newCard.sexualOrientation = "LGBT";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -580,13 +716,13 @@ cardTemplates.push(newCard);
 newCard = Object.assign({}, objCard);
 newCard.id = "lesbian";
 newCard.title = "Lesbian";
-newCard.subTitle = "I love other women.";
-newCard.details = "Each round, gain " + config.medium + " Defence for every Female card in your deck.";
+newCard.subTitle = "";
+newCard.details = "Each round, if there is another <b>Female</b> card in hand, add " + config.medium + " to <b>Defence</b>";
 newCard.race = "Neutral";
 newCard.gender = "Female";
 newCard.sexualOrientation = "LGBT";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -602,12 +738,12 @@ newCard = Object.assign({}, objCard);
 newCard.id = "biman";
 newCard.title = "Bisexual Man";
 newCard.subTitle = "I love other men.";
-newCard.details = "Each round, gain " + config.medium + " Defence for every Male card in your deck.";
+newCard.details = "If there is another <b>Male</b> card in hand, add " + config.minor + " to <b>Base Attack</b> when attacking.<br />Each round, gain " + config.minor + " Defence if there is another <b>Female</b> card in your hand.";
 newCard.race = "Neutral";
 newCard.gender = "Male";
 newCard.sexualOrientation = "LGBT";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -623,12 +759,12 @@ newCard = Object.assign({}, objCard);
 newCard.id = "biwoman";
 newCard.title = "Bisexual Woman";
 newCard.subTitle = "I love other women.";
-newCard.details = "Each round, gain " + config.medium + " Defence for every Female card in your deck.";
+newCard.details = "If there is another Male card in hand, add " + config.minor + " to Base Attack when attacking.<br />Each round, gain " + config.minor + " Defence if there is another <b>Female</b> card in your hand.";
 newCard.race = "Neutral";
 newCard.gender = "Female";
 newCard.sexualOrientation = "LGBT";
-newCard.baseAttack = config.medium;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.minor;
+newCard.baseDefence = config.minor;
 newCard.wokeRating = config.minor;
 newCard.destroySpecial = function()
 {
@@ -644,7 +780,7 @@ newCard = Object.assign({}, objCard);
 newCard.id = "adhominem";
 newCard.title = "Ad Hominem";
 newCard.subTitle = "Cheap shots are the best shots.";
-newCard.details = "Attack a random opponent's card after attacking the opposing card.<br /><br />Upon being Triggered, subtract " + config.minor + " Woke Points from oppoent.";
+newCard.details = "";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
@@ -670,7 +806,7 @@ newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
-newCard.baseDefence = config.minor;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -691,7 +827,7 @@ newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
-newCard.baseDefence = config.minor;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -712,7 +848,7 @@ newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
-newCard.baseDefence = config.minor;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -733,7 +869,49 @@ newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
-newCard.baseDefence = config.minor;
+newCard.baseDefence = config.medium;
+newCard.wokeRating = config.medium;
+newCard.destroySpecial = function()
+{
+	//this.destroyCard();
+};
+newCard.attackSpecial = function()
+{
+	//this.attackCard();
+};
+cardTemplates.push(newCard);
+
+newCard = Object.assign({}, objCard);
+newCard.id = "misogynist";
+newCard.title = "Misogynist";
+newCard.subTitle = "";
+newCard.details = "";
+newCard.race = "Neutral";
+newCard.gender = "Male";
+newCard.sexualOrientation = "Neutral";
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
+newCard.wokeRating = config.medium;
+newCard.destroySpecial = function()
+{
+	//this.destroyCard();
+};
+newCard.attackSpecial = function()
+{
+	//this.attackCard();
+};
+cardTemplates.push(newCard);
+
+newCard = Object.assign({}, objCard);
+newCard.id = "tbmedia";
+newCard.title = "Trial By Media";
+newCard.subTitle = "";
+newCard.details = "";
+newCard.race = "Neutral";
+newCard.gender = "Neutral";
+newCard.sexualOrientation = "Neutral";
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -754,7 +932,7 @@ newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
-newCard.baseDefence = config.minor;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -775,7 +953,7 @@ newCard.race = "Neutral";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
-newCard.baseDefence = config.minor;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -789,14 +967,14 @@ cardTemplates.push(newCard);
 
 
 newCard = Object.assign({}, objCard);
-newCard.id = "gaslighter";
-newCard.title = "Gaslighter";
+newCard.id = "gaslighting";
+newCard.title = "Gaslighting";
 newCard.subTitle = "I'm sorry that's how you feel.";
 newCard.details = "When attacking, for every one of your opponent's Woke Points, add " + config.minor + " to Base Attack.<br /><br />On destruction, subtract " + config.minor + " Woke Points.";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.minor;
+newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
@@ -813,12 +991,12 @@ newCard = Object.assign({}, objCard);
 newCard.id = "ptrophy";
 newCard.title = "Participation Trophy";
 newCard.subTitle = "Everyone gets a prize!";
-newCard.details = "Every round, all cards in the hand add " + config.minor + " to Defence.<br /><br />On destruction, add " + config.minor + " Likes.";
+newCard.details = "Every round, all cards in the hand add " + config.minor + " to Defence..<br /><br />On destruction, add " + config.minor + " Likes.";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.minor;
-newCard.baseDefence = config.minor;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -834,12 +1012,12 @@ newCard = Object.assign({}, objCard);
 newCard.id = "cultapp";
 newCard.title = "Cultural Appropriation";
 newCard.subTitle = "";
-newCard.details = "On play, for every Woke Point your opponent has, add " + config.minor + " to Defence.<br /><br />Upon being Triggered, add " + config.minor + " Defence for all cards.";
+newCard.details = "On play, for every Woke Point your opponent has, add " + config.minor + " to Defence..<br /><br />Upon being Triggered, add " + config.minor + " Defence for all cards.";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.minor;
-newCard.baseDefence = config.minor;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -859,8 +1037,8 @@ newCard.details = "When attacking, inflict " + config.minor + " damage to the ad
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -880,8 +1058,8 @@ newCard.details = "";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -901,8 +1079,8 @@ newCard.details = "";
 newCard.race = "Neutral";
 newCard.gender = "Male";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -922,8 +1100,8 @@ newCard.details = "";
 newCard.race = "Neutral";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -936,15 +1114,15 @@ newCard.attackSpecial = function()
 cardTemplates.push(newCard);
 
 newCard = Object.assign({}, objCard);
-newCard.id = "wsupremacist";
-newCard.title = "White Supremacist";
+newCard.id = "wsupremacy";
+newCard.title = "White Supremacy";
 newCard.subTitle = "Blood and soil.";
 newCard.details = "";
 newCard.race = "White";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -957,15 +1135,57 @@ newCard.attackSpecial = function()
 cardTemplates.push(newCard);
 
 newCard = Object.assign({}, objCard);
-newCard.id = "mansplainer";
-newCard.title = "Mansplainer";
+newCard.id = "wwashing";
+newCard.title = "Whitewashing";
+newCard.subTitle = "";
+newCard.details = "";
+newCard.race = "White";
+newCard.gender = "Neutral";
+newCard.sexualOrientation = "Neutral";
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
+newCard.wokeRating = config.medium;
+newCard.destroySpecial = function()
+{
+	//this.destroyCard();
+};
+newCard.attackSpecial = function()
+{
+	//this.attackCard();
+};
+cardTemplates.push(newCard);
+
+newCard = Object.assign({}, objCard);
+newCard.id = "maggression";
+newCard.title = "Micro-aggression";
+newCard.subTitle = "";
+newCard.details = "";
+newCard.race = "Neutral";
+newCard.gender = "Neutral";
+newCard.sexualOrientation = "Neutral";
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
+newCard.wokeRating = config.medium;
+newCard.destroySpecial = function()
+{
+	//this.destroyCard();
+};
+newCard.attackSpecial = function()
+{
+	//this.attackCard();
+};
+cardTemplates.push(newCard);
+
+newCard = Object.assign({}, objCard);
+newCard.id = "mansplaining";
+newCard.title = "Mansplaining";
 newCard.subTitle = "What you women don't realize is...";
 newCard.details = "";
 newCard.race = "Neutral";
 newCard.gender = "Male";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -985,8 +1205,8 @@ newCard.details = "";
 newCard.race = "White";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -1006,8 +1226,8 @@ newCard.details = "";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -1027,8 +1247,8 @@ newCard.details = "Each round, all opposing cards attack at -" + config.medium +
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -1044,12 +1264,96 @@ newCard = Object.assign({}, objCard);
 newCard.id = "antifa";
 newCard.title = "ANTIFA";
 newCard.subTitle = "Everytime you punch a Nazi, an angel gets its wings.";
-newCard.details = "On play, instantly Trigger <i>White Supremacist</i> card.<br /><br /><br /><br />";
+newCard.details = "On play, instantly Trigger <i>Xenophobe</i> card.<br /><br /><br /><br />";
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
+newCard.wokeRating = config.medium;
+newCard.destroySpecial = function()
+{
+	//this.destroyCard();
+};
+newCard.attackSpecial = function()
+{
+	//this.attackCard();
+};
+cardTemplates.push(newCard);
+
+newCard = Object.assign({}, objCard);
+newCard.id = "extremist";
+newCard.title = "Extremist";
+newCard.subTitle = "There are no neutrals. Pick a side!";
+newCard.details = "";
+newCard.race = "Neutral";
+newCard.gender = "Neutral";
+newCard.sexualOrientation = "Neutral";
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
+newCard.wokeRating = config.medium;
+newCard.destroySpecial = function()
+{
+	//this.destroyCard();
+};
+newCard.attackSpecial = function()
+{
+	//this.attackCard();
+};
+cardTemplates.push(newCard);
+
+newCard = Object.assign({}, objCard);
+newCard.id = "moderate";
+newCard.title = "Moderate";
+newCard.subTitle = "There are two sides to a coin.";
+newCard.details = "";
+newCard.race = "Neutral";
+newCard.gender = "Neutral";
+newCard.sexualOrientation = "Neutral";
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
+newCard.wokeRating = config.medium;
+newCard.destroySpecial = function()
+{
+	//this.destroyCard();
+};
+newCard.attackSpecial = function()
+{
+	//this.attackCard();
+};
+cardTemplates.push(newCard);
+
+newCard = Object.assign({}, objCard);
+newCard.id = "leftwinger";
+newCard.title = "Left-winger";
+newCard.subTitle = "From each according to his ability, to each according to his needs.";
+newCard.details = "";
+newCard.race = "Neutral";
+newCard.gender = "Neutral";
+newCard.sexualOrientation = "Neutral";
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
+newCard.wokeRating = config.medium;
+newCard.destroySpecial = function()
+{
+	//this.destroyCard();
+};
+newCard.attackSpecial = function()
+{
+	//this.attackCard();
+};
+cardTemplates.push(newCard);
+
+newCard = Object.assign({}, objCard);
+newCard.id = "rightwinger";
+newCard.title = "Right-winger";
+newCard.subTitle = "All wealth is the product of labor.";
+newCard.details = "";
+newCard.race = "Neutral";
+newCard.gender = "Neutral";
+newCard.sexualOrientation = "Neutral";
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -1069,8 +1373,8 @@ newCard.details = "Each round, inflict " + config.minor + " damage to the all ca
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.major;
-newCard.baseDefence = config.major;
+newCard.baseAttack = config.medium;
+newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
 newCard.destroySpecial = function()
 {
@@ -1090,8 +1394,8 @@ newCard.details = "Each round, all Minority cards attack with x" + config.minor 
 newCard.race = "Minority";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.minor;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.major;
+newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
 newCard.destroySpecial = function()
 {
@@ -1111,8 +1415,8 @@ newCard.details = "Each round, all Female cards attack with x" + config.minor + 
 newCard.race = "Neutral";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.minor;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.major;
+newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
 newCard.destroySpecial = function()
 {
@@ -1132,8 +1436,8 @@ newCard.details = "Each round, all Female cards gain " + config.major + " Defenc
 newCard.race = "Neutral";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.minor;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.major;
+newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
 newCard.destroySpecial = function()
 {
@@ -1153,8 +1457,8 @@ newCard.details = "Each round, all LGBT cards gain " + config.major + " Defence.
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "LGBT";
-newCard.baseAttack = config.minor;
-newCard.baseDefence = config.medium;
+newCard.baseAttack = config.major;
+newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
 newCard.destroySpecial = function()
 {
@@ -1174,7 +1478,7 @@ newCard.details = "Each round, all Male, Female, Minority, White and LGBT cards 
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
-newCard.baseAttack = config.minor;
+newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
 newCard.destroySpecial = function()
@@ -1196,7 +1500,7 @@ newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
-newCard.baseDefence = config.minor;
+newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
 newCard.destroySpecial = function()
 {

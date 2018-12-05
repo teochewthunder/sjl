@@ -61,7 +61,7 @@ player.onEditLikes = function (pts)
 
 	if (player.likes == 0)
 	{
-		game.winner = bot;
+		game.winner = "bot";
 	}
 
 	$("#playerStatLikes").animate
@@ -81,6 +81,11 @@ player.onEditLikes = function (pts)
 	  			function() 
 	  			{ 				
 	  				$("#playerStatLikes").html(player.likes);
+
+	  				if (game.winner != null)
+					{
+						game.declareWinner();
+					}
 	  			}
 	  		);
 		}
@@ -122,7 +127,7 @@ bot.onEditLikes = function (pts)
 
 	if (bot.likes == 0)
 	{
-		game.winner = player;
+		game.winner = "player";
 	}
 
 	$("#botStatLikes").animate
@@ -142,6 +147,11 @@ bot.onEditLikes = function (pts)
 	  			function() 
 	  			{
 	  				$("#botStatLikes").html(bot.likes);
+
+	  				if (game.winner != null)
+					{
+						game.declareWinner();
+					}
 	  			}
 	  		);
 		}

@@ -42,7 +42,16 @@ var objPlaceholder =
 	},
 	findCardById: function(id)
 	{
-		var card = this.cards.filter
+		var card;
+		card = this.cards.filter
+		(
+			function(x) 
+			{
+				return x != null; 
+			}	
+		)
+
+		card = card.filter
 		(
 			function(x) 
 			{
@@ -58,6 +67,7 @@ var objPlaceholder =
 		{
 			return card[0];			
 		}
+
 	},
 	compactCards: function()
 	{
@@ -99,7 +109,7 @@ var objPlaceholder =
 };
 
 var playerDeck = Object.assign({}, objPlaceholder);
-playerDeck.maxCards = 42;
+playerDeck.maxCards = 50;
 playerDeck.cards = [];
 
 var playerHand = Object.assign({}, objPlaceholder);
@@ -107,7 +117,7 @@ playerHand.maxCards = 10;
 playerHand.cards = [];
 
 var botDeck = Object.assign({}, objPlaceholder);
-botDeck.maxCards = 42;
+botDeck.maxCards = 50;
 botDeck.cards = [];
 
 var botHand = Object.assign({}, objPlaceholder);
@@ -141,26 +151,15 @@ playerDeck.render = function()
 
 		var card = $("<div></div>");
 		card.attr("id", "playerDeck_card" + i);
-		card.attr("data-index", i);
+		//card.attr("data-index", i);
 		card.addClass("deckSlot_card");
 		container.append(card);
 
-		var buttons = $("<div></div>");
-		buttons.addClass("deckSlot_buttons");
-
-		var span = $("<span></span>");
-		span.attr("id", "ttl_" + i);
-		span.append(span);
-
-		var button = $("<button></button>");
-		button.attr("id", "btnAddToHand_" + i);
-		button.attr("data-index", i);
-		button.html("\u25b2");
-		button.addClass("btnAddToHand");
-		button.attr("disabled", "disabled");
-		buttons.append(button);
-
-		container.append(buttons);
+		var info = $("<div></div>");
+		info.addClass("btnInfo");
+		info.attr("data-index", i);
+		info.html("i")
+		container.append(info);
 
 		if (i >= this.cards.length)
 		{
@@ -173,32 +172,93 @@ playerDeck.render = function()
 
 playerDeck.enableButtons = function()
 {
+	var enabled = false;
+
 	$(playerDeck.cards).each
 	(
 		function (index)
-		{
-			$("#btnAddToHand_" + index).hide();
-			$("#ttl_" + index).hide();
+		{	
+			$("#playerDeck_card" + index + " .ttl").hide();
+			$("#playerDeck_card" + index + " .wokeRating").html(playerDeck.cards[index].wokeRating).show();
 
-			if (playerHand.findCardById(playerDeck.cards[index].id).length == 0 && playerDeck.cards[index].wokeRating <= player.wokePoints)
+			if (playerHand.cards.length == playerHand.maxCards)
 			{
-				$("#btnAddToHand_" + index).removeAttr("disabled");
+				enabled = false;
 			}
 			else
 			{
-				$("#btnAddToHand_" + index).attr("disabled", "disabled");
+				if (playerHand.findCardById(playerDeck.cards[index].id).length == 0)
+				{
+					enabled = true;
+
+					if (playerDeck.cards[index].wokeRating <= player.wokePoints)
+					{
+						enabled = true;
+					}
+					else
+					{
+						enabled = false;	
+					}
+				}
+				else
+				{
+					$("#playerDeck_card" + index + " .wokeRating").html("&#9876;");
+					enabled = false;
+				}				
 			}
 
-			if (playerDeck.cards[index].turnsToLive == 0)
+			if (playerDeck.cards[index].turnsToLive > 0)
 			{
-				$("#btnAddToHand_" + index).show();
+				$("#playerDeck_card" + index + " .ttl").html(playerDeck.cards[index].turnsToLive).show();
+				$("#playerDeck_card" + index + " .wokeRating").hide();
+				enabled = false;
+			}
+
+			$("#playerDeck_card" + index).off("click");
+
+			if (enabled)
+			{
+				$("#playerDeck_card" + index).removeClass("cannotAddToHand");
+
+				if (game.paused)
+				{
+			        $("#playerDeck_card" + index).on
+			        (
+			        	"click", 
+			        	function()
+				        {
+							if (index < playerDeck.cards.length)
+							{
+								playerDeck.playCard(playerDeck.cards[index]);			
+							}
+
+							$("#playerDeck_card" + index).off("click");	
+				        }
+			        );					
+				}
+				else
+				{
+					$("#playerDeck_card" + index).off("click");	
+				}
 			}
 			else
 			{
-				$("#ttl_" + index).show();
+				$("#playerDeck_card" + index).addClass("cannotAddToHand");
+				$("#playerDeck_card" + index).off("click");	
 			}
 		}
-	);		
+	);	
+
+	if (game.paused)
+	{
+		$("#btnRound").removeClass("greybuttonDisabled").addClass("greybutton");
+		$("#indicator").html(" Begin &#9658;");
+	}
+	else
+	{
+		$("#btnRound").removeClass("greybutton").addClass("greybuttonDisabled");
+		$("#indicator").html("<img src='img/loading.gif' height='10'>");
+	}
 };
 
 playerHand.renderCards = function()
@@ -220,6 +280,8 @@ playerHand.renderCards = function()
 		}		
 	}
 
+	game.hideProcessingMessage();
+/*
 	if (game.round == 0 )
 	{
 		if (playerHand.cards.length > 0)
@@ -230,7 +292,7 @@ playerHand.renderCards = function()
 		{
 			game.hideProcessingMessage();
 		}
-	}
+	}*/
 };
 
 playerHand.showEditDefence = function(index, pts)
@@ -286,10 +348,7 @@ playerDeck.playCard = function (card)
 
 	playerHand.handGlow("playerHand_" + (playerHand.cards.length - 1), 1);
 
-	if (game.round > 0)
-	{
-		card.playSpecial();		
-	}
+	card.playSpecial();		
 };
 
 botHand.renderCards = function()
@@ -365,7 +424,7 @@ botDeck.playRandomCard = function ()
 
 	if (availableToPlay.length > 0)
 	{
-		game.pause = true;
+		game.paused = false;
 		var added = false;
 
 		var i = config.generateRandomNo(0, availableToPlay.length -1);
@@ -378,7 +437,7 @@ botDeck.playRandomCard = function ()
 	}
 	else
 	{
-		game.pause = false;
+		game.paused = true;
 		game.hideProcessingMessage();
 		playerDeck.renderCards();
 	}
@@ -392,10 +451,7 @@ botDeck.playCard = function (card)
 
 	botHand.handGlow("botHand_" + (botHand.cards.length - 1), 1);
 
-	if (game.round > 0)
-	{
-		card.playSpecial();		
-	}
+	card.playSpecial();		
 
 	setTimeout
 	(

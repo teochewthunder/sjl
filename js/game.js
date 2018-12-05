@@ -5,6 +5,18 @@ var game =
 	turnAttacker: "bot",
 	turnIndex: -1,
 	paused: true,
+	declareWinner: function()
+	{
+		if (this.winner == "bot")
+		{
+			$("#botWinner").html(" wins!");
+		}
+
+		if (this.winner == "player")
+		{
+			$("#playerWinner").html(" wins!");
+		}
+	},
 	openOverlay: function(content)
 	{
 		$("#screenOverlay").show();
@@ -115,10 +127,6 @@ var game =
 	},
 	startRound: function()
 	{
-		this.paused = true;
-		playerDeck.enableButtons();
-		this.round++;
-
 		$(playerDeck.cards).each
 		(
 			function (index)
@@ -141,6 +149,10 @@ var game =
 			}
 		);
 
+		this.paused = false;
+		playerDeck.enableButtons();
+		this.round++;
+
 		game.nextTurn();
 		game.startTurn();
 	},
@@ -153,7 +165,15 @@ var game =
 				if (playerHand.cards[this.turnIndex] == null)
 				{
 					game.nextTurn();
-					game.startTurn();
+
+					if (game.turnIndex == -1) 
+					{
+						game.endRound();
+					}
+					else
+					{
+						game.startTurn();
+					}
 				}
 				else
 				{
@@ -161,13 +181,20 @@ var game =
 					playerHand.cards[this.turnIndex].onAttack(this.turnIndex);					
 				}
 			}
-
-			if (this.turnAttacker == "bot")
+			else
 			{
 				if (botHand.cards[this.turnIndex] == null)
 				{
 					game.nextTurn();
-					game.startTurn();
+
+					if (game.turnIndex == -1) 
+					{
+						game.endRound();
+					}
+					else
+					{
+						game.startTurn();
+					}
 				}
 				else
 				{
@@ -176,15 +203,9 @@ var game =
 				}
 			}
 		}
-		else
-		{
-			this.paused = false;
-		}
 	},
 	nextTurn: function()
 	{
-		console.log(this.round,this.turnAttacker,this.turnIndex);
-
 		if (this.turnAttacker == "bot")
 		{
 			if (this.turnIndex == -1)
@@ -193,29 +214,75 @@ var game =
 			}
 			else
 			{
-				if (this.turnIndex == botHand.cards.length - 1)
+				if (botHand.cards.length == 0)
 				{
-					this.turnIndex = 0;
 					this.turnAttacker = "player";
 				}
 				else
 				{
-					this.turnIndex++;
-				}				
+					if (this.turnIndex == botHand.cards.length - 1)
+					{
+						if (botHand.cards.length > playerHand.cards.length)
+						{
+							this.turnIndex = -1;
+							this.turnAttacker = "bot";
+						}
+						else
+						{
+							this.turnAttacker = "player";
+						}
+					}
+					else
+					{
+						this.turnAttacker = "player";
+					}					
+				}
 			}
 		}
 		else
 		{
-			if (this.turnIndex == playerHand.cards.length - 1)
+			if (playerHand.cards.length == 0)
 			{
-				this.turnIndex = -1;
 				this.turnAttacker = "bot";
+				this.turnIndex ++;
 			}
 			else
 			{
-				this.turnIndex++;
+				if (this.turnIndex >= playerHand.cards.length - 1)
+				{
+					if (playerHand.cards.length >= botHand.cards.length)
+					{
+						this.turnIndex = -1;
+						this.turnAttacker = "bot";
+					}
+					else
+					{
+						this.turnAttacker = "bot";
+						this.turnIndex ++;
+					}
+				}
+				else
+				{
+					this.turnAttacker = "bot";
+					this.turnIndex++;
+				}				
 			}
 		}
+
+		console.log(this.turnAttacker,this.turnIndex)
+	},
+	endRound: function()
+	{
+		playerHand.compactCards();
+		playerHand.renderCards();	
+
+		botHand.compactCards();
+		botHand.renderCards();
+
+		$("#rounds").html(this.round + 1);
+
+		game.showProcessingMessage("Generating bot hand for next round...", "loading.gif");
+		botDeck.playRandomCard();
 	}
 }
 
@@ -247,20 +314,7 @@ $(document).ready(function() {
 	botHand.render();
 
 	//button handlers
-	$(".btnAddToHand").click
-	(
-		function(e)
-		{
-			var i = e.currentTarget.dataset.index;
-
-			if (i < playerDeck.cards.length)
-			{
-				playerDeck.playCard(playerDeck.cards[i]);			
-			}
-		}
-	)
-
-	$("#playerDeck .deckSlot_card").click
+	$(".btnInfo").click
 	(
 		function(e)
 		{
@@ -275,7 +329,7 @@ $(document).ready(function() {
 			}
 		}
 	)
-
+/*
 	$("#playerHand .handSlot").click
 	(
 		function(e)
@@ -289,15 +343,16 @@ $(document).ready(function() {
 					if (playerHand.cards[i] != null)
 					{
 						player.onEditWokePoints(playerHand.cards[i].wokeRating);	
-						playerHand.removeCard(playerHand.cards[i].id);
+						playerHand.cards[i] = null;
 						playerHand.compactCards();
-						playerHand.renderCards();			
+						playerHand.renderCards();
+						playerDeck.renderCards();			
 					}
 				}				
 			}
 		}
 	)
-
+*/
 	$("#btnCardSummary").click
 	(
 		function(e)
@@ -311,15 +366,19 @@ $(document).ready(function() {
 	$("#botStatLikes").html(bot.likes);
 	$("#playerStatWokePoints").html(player.wokePoints);
 	$("#playerStatLikes").html(player.likes);
-	game.showProcessingMessage("Generating bot hand...", "loading.gif");
+	game.showProcessingMessage("Generating bot hand for first round...", "loading.gif");
 	botDeck.playRandomCard();
 
 	//start
-	$("#btnRound").click
+	$("#btnRound").on
 	(
+		"click",
 		function(e)
 		{
-			game.startRound();
+			if (game.paused)
+			{
+				game.startRound();				
+			}
 		}
-	)
+	);
 });
