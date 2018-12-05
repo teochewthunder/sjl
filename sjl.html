@@ -15,13 +15,21 @@
 		<script src="js/game.js"></script>
 	</head>
 	<body>
+		<div class="helpButtons">
+			<div id="btnCardSummary" class="topbutton">&#9776;</div>
+			<div id="btnHelp" class="topbutton">i</div>
+		</div>
+
 		<div id="content_container">
 			<div id="header">
-				<h1>SOCIAL JUSTICE LEAGUE</h1>
+				<h1>
+					SOCIAL JUSTICE LEAGUE
+				</h1>
 				<p>
-					Round <span id="rounds">0</span> 
-					<button id="btnCardSummary">Card Summary</button>
-					<button id="btnRound">Go! &#9658;</button>
+					<span id="btnRound" class="greybuttonDisabled">
+						Round <span id="rounds">1</span> 
+						<span id="indicator"> <img src="img/loading.gif" height="10"></span>
+					</span>
 				</p> 
 			</div>
 
