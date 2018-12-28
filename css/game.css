@@ -18,6 +18,7 @@ body
 	height: 95%;
 	margin: 1em auto 0 auto;
 	border-radius: 10px;
+	overflow: hidden;
 }
 
 #bot_container
@@ -152,23 +153,32 @@ body
 	width: 730px;
 	height: 20px;
 	margin: 0 auto 0 auto;
-	font-size: 1em;
 	color: #FFFFFF;
 	font-family: arial;
 }
 
-.info_wrapper
+.special_wrapper
 {
+	font-size: 0.7em;
 	width: 55%;
 	height: 100%;
+	float: right;
+}
+
+.info_wrapper
+{
+	font-size: 0.7em;
+	width: 35%;
+	height: 50%;
 	float: left;
 }
 
 .stat_wrapper
 {
+	font-size: 0.7em;
 	width: 35%;
-	height: 100%;
-	float: right;
+	height: 50%;
+	float: left;
 }
 
 .statLabel

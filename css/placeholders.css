@@ -55,6 +55,11 @@
 	margin-right: auto;
 }
 
+.specialText
+{
+	font-size: 0.8em;
+}
+
 .deckSlot_card
 {
 	width: 75px;
