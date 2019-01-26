@@ -5,6 +5,55 @@ var game =
 	turnAttacker: "bot",
 	turnIndex: -1,
 	paused: true,
+	init: function()
+	{
+		$(playerDeck.cards).each
+		(
+			function (index)
+			{
+				playerDeck.cards[index].turnsToLive = 0;
+				playerDeck.cards[index].init();
+			}
+		);
+
+		$(botDeck.cards).each
+		(
+			function (index)
+			{
+				botDeck.cards[index].turnsToLive = 0;
+				botDeck.cards[index].init();
+			}
+		);
+
+		game.round = 0;
+		game.winner = null;
+		game.turnAttacker = "bot";
+		game.turnIndex = -1;
+		game.paused = true;
+
+		playerHand.cards = [];
+		botHand.cards = [];
+		playerHand.compactCards();
+		playerHand.renderCards();
+		botHand.compactCards();
+		botHand.renderCards();
+
+		player.wokePoints = config.major * 3;
+		player.likes = config.major * config.major;
+
+		bot.wokePoints = config.major * 3;
+		bot.likes = config.major * config.major;
+
+		$("#botWinner").html("");
+		$("#playerWinner").html("");
+
+		$("#botStatWokePoints").html(bot.wokePoints);
+		$("#botStatLikes").html(bot.likes);
+		$("#playerStatWokePoints").html(player.wokePoints);
+		$("#playerStatLikes").html(player.likes);
+		game.showProcessingMessage("Generating bot hand for first round...", "loading.gif");
+		botDeck.playRandomCard();
+	},
 	declareWinner: function()
 	{
 		if (this.winner == "bot")
@@ -16,6 +65,8 @@ var game =
 		{
 			$("#playerWinner").html(" wins!");
 		}
+
+		this.round = 0;
 	},
 	openOverlay: function(content)
 	{
@@ -80,7 +131,17 @@ var game =
 				tr.append(td);
 				td = $("<td width='90%' bgcolor='#EEEEEE'></td>");
 				p = $("<p></p>");
-				p.html(cardTemplates[i].details);
+				var content = "";
+				$(cardTemplates[i].details).each
+				(
+					function (index)
+					{
+						content += "<b>" + cardTemplates[i].details[index].title + ":</b> ";
+						content += cardTemplates[i].details[index].description;
+						content += "<br />";
+					}
+				);
+				p.html(content);
 				td.append(p);
 				tr.append(td);
 				table.append(tr);
@@ -133,8 +194,21 @@ var game =
 			{
 				if (playerDeck.cards[index].turnsToLive > 0)
 				{
+					if (playerDeck.cards[index].id == "snowflake")
+					{
+						playerDeck.cards[index].onEditDefence(config.minor, "#playerDeck_" + index + " .def_" + playerDeck.cards[index].id);
+					}
+
 					playerDeck.cards[index].onEditTurnsToLive(-1);
-				}
+				}					
+			}
+		);
+
+		$(playerHand.cards).each
+		(
+			function (index)
+			{
+				playerHand.cards[index].roundSpecial(index, "player");
 			}
 		);
 
@@ -144,8 +218,21 @@ var game =
 			{
 				if (botDeck.cards[index].turnsToLive > 0)
 				{
+					if (botDeck.cards[index].id == "snowflake")
+					{
+						botDeck.cards[index].editDefence(config.medium);
+					}
+
 					botDeck.cards[index].onEditTurnsToLive(-1);
-				}
+				}					
+			}
+		);
+
+		$(botHand.cards).each
+		(
+			function (index)
+			{
+				botHand.cards[index].roundSpecial(index, "bot");
 			}
 		);
 
@@ -214,62 +301,38 @@ var game =
 			}
 			else
 			{
-				if (botHand.cards.length == 0)
+				var isOdd = ((this.turnIndex + 1) % 2 == 0 ? false: true);
+
+				if (isOdd)
 				{
-					this.turnAttacker = "player";
+					this.turnAttacker = "player";					
 				}
 				else
 				{
-					if (this.turnIndex == botHand.cards.length - 1)
+					if (this.turnIndex + 1 == botDeck.maxCards)
 					{
-						if (botHand.cards.length > playerHand.cards.length)
-						{
-							this.turnIndex = -1;
-							this.turnAttacker = "bot";
-						}
-						else
-						{
-							this.turnAttacker = "player";
-						}
+						this.turnIndex = -1;
 					}
 					else
 					{
-						this.turnAttacker = "player";
-					}					
+						this.turnIndex ++;
+					}
 				}
 			}
 		}
 		else
 		{
-			if (playerHand.cards.length == 0)
+			var isOdd = ((this.turnIndex + 1) % 2 == 0 ? false: true);
+
+			if (isOdd)
 			{
-				this.turnAttacker = "bot";
-				this.turnIndex ++;
+				this.turnIndex ++;				
 			}
 			else
 			{
-				if (this.turnIndex >= playerHand.cards.length - 1)
-				{
-					if (playerHand.cards.length >= botHand.cards.length)
-					{
-						this.turnIndex = -1;
-						this.turnAttacker = "bot";
-					}
-					else
-					{
-						this.turnAttacker = "bot";
-						this.turnIndex ++;
-					}
-				}
-				else
-				{
-					this.turnAttacker = "bot";
-					this.turnIndex++;
-				}				
+				this.turnAttacker = "bot";	
 			}
 		}
-
-		console.log(this.turnAttacker,this.turnIndex)
 	},
 	endRound: function()
 	{
@@ -294,15 +357,48 @@ $(document).ready(function() {
 	playerDeck.cards = [];
 	botDeck.cards = [];
 
+	$("#bot_container .special_wrapper").html("");
+	$("#player_container .special_wrapper").html("");
+
 	$(cardTemplates).each
 	(
 		function (index)
 		{
 			cardTemplates[index].init();
-			cardTemplates[index].owner = "player";
 			playerDeck.addCard(Object.assign({}, cardTemplates[index]));
-			cardTemplates[index].owner = "bot";
 			botDeck.addCard(Object.assign({}, cardTemplates[index]));
+
+			//render hidden special text
+			var containerBot = $("<div></div>");
+			containerBot.attr("id", "botSpecial_" + cardTemplates[index].id);
+
+			var containerPlayer = $("<div></div>");
+			containerPlayer.attr("id", "playerSpecial_" + cardTemplates[index].id);
+
+			$(cardTemplates[index].details).each
+			(
+				function (i)
+				{
+					var divBot;
+					divBot = $("<div></div>");
+					divBot.addClass("specialText").addClass("special_" + i);
+					divBot.attr("style", "color: rgba(255, 255, 255, 0)");
+
+					var divPlayer;
+					divPlayer = $("<div></div>");
+					divPlayer.addClass("specialText").addClass("special_" + i);
+					divPlayer.attr("style", "color: rgba(255, 255, 255, 0)");
+
+					divBot.html("<b>" + cardTemplates[index].details[i].title + ": </b>" + cardTemplates[index].details[i].description);
+					divPlayer.html("<b>" + cardTemplates[index].details[i].title + ": </b>" + cardTemplates[index].details[i].description);
+
+					containerBot.append(divBot);
+					containerPlayer.append(divPlayer);
+				}
+			);
+
+			$("#bot_container .special_wrapper").append(containerBot.hide());
+			$("#player_container .special_wrapper").append(containerPlayer.hide());
 		}
 	);
 
@@ -329,30 +425,7 @@ $(document).ready(function() {
 			}
 		}
 	)
-/*
-	$("#playerHand .handSlot").click
-	(
-		function(e)
-		{
-			if (game.round == 0)
-			{
-				var i = e.currentTarget.dataset.index;
 
-				if (i < playerHand.cards.length)
-				{
-					if (playerHand.cards[i] != null)
-					{
-						player.onEditWokePoints(playerHand.cards[i].wokeRating);	
-						playerHand.cards[i] = null;
-						playerHand.compactCards();
-						playerHand.renderCards();
-						playerDeck.renderCards();			
-					}
-				}				
-			}
-		}
-	)
-*/
 	$("#btnCardSummary").click
 	(
 		function(e)
@@ -362,12 +435,15 @@ $(document).ready(function() {
 	)
 
 	//init
+	game.init();
+	/*
 	$("#botStatWokePoints").html(bot.wokePoints);
 	$("#botStatLikes").html(bot.likes);
 	$("#playerStatWokePoints").html(player.wokePoints);
 	$("#playerStatLikes").html(player.likes);
 	game.showProcessingMessage("Generating bot hand for first round...", "loading.gif");
 	botDeck.playRandomCard();
+	*/
 
 	//start
 	$("#btnRound").on
@@ -375,9 +451,16 @@ $(document).ready(function() {
 		"click",
 		function(e)
 		{
-			if (game.paused)
+			if (game.winner != null)
 			{
-				game.startRound();				
+				game.init();
+			}
+			else
+			{
+				if (game.paused)
+				{
+					game.startRound();				
+				}				
 			}
 		}
 	);

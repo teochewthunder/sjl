@@ -23,6 +23,7 @@ var objPlayer =
 	},	
 	onEditWokePoints: function(pts) {},
 	onEditLikes: function(pts) {},
+	showSpecial: function(cardId, specialIndex, cardIndex) {},
 }
 
 var player = Object.assign({}, objPlayer);
@@ -92,6 +93,35 @@ player.onEditLikes = function (pts)
 	);	
 }
 
+player.showSpecial = function (cardId, specialIndex, cardIndex)
+{
+	$("#playerSpecial_" + cardId).show();
+	playerHand.handGlow("playerHand_" + cardIndex, 1);
+
+	$("#playerSpecial_" + cardId + " .special_" + specialIndex).animate
+	(
+		{
+			color: "rgba(255, 255, 255, 1)",
+		}, 
+		50, 
+		function() 
+		{
+			$("#playerSpecial_" + cardId + " .special_" + specialIndex).animate
+			(
+				{
+					color: "rgba(255, 255, 255, 0)",
+				}, 
+				2000, 
+				function() 
+				{
+					$("#playerSpecial_" + cardId).hide();
+					$("#playerSpecial_" + cardId + " .special_" + specialIndex).attr("style", "color: rgba(255, 255, 255, 0)");
+				}
+			);
+		}
+	);	
+}
+
 
 var bot = Object.assign({}, objPlayer);
 bot.onEditWokePoints = function (pts)
@@ -154,6 +184,35 @@ bot.onEditLikes = function (pts)
 					}
 	  			}
 	  		);
+		}
+	);
+}
+
+bot.showSpecial = function (cardId, specialIndex, cardIndex)
+{
+	$("#botSpecial_" + cardId).show();
+	botHand.handGlow("botHand_" + cardIndex, 1);
+
+	$("#botSpecial_" + cardId + " .special_" + specialIndex).animate
+	(
+		{
+			color: "rgba(255, 255, 255, 1)",
+		}, 
+		50, 
+		function() 
+		{
+			$("#botSpecial_" + cardId + " .special_" + specialIndex).animate
+			(
+				{
+					color: "rgba(255, 255, 255, 0)",
+				}, 
+				2000, 
+				function() 
+				{
+					$("#botSpecial_" + cardId).hide();
+					$("#botSpecial_" + cardId + " .special_" + specialIndex).attr("style", "color: rgba(255, 255, 255, 0)");
+				}
+			);
 		}
 	);
 }

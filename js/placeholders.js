@@ -252,7 +252,15 @@ playerDeck.enableButtons = function()
 	if (game.paused)
 	{
 		$("#btnRound").removeClass("greybuttonDisabled").addClass("greybutton");
-		$("#indicator").html(" Begin &#9658;");
+
+		if (game.winner == null)
+		{
+			$("#indicator").html(" Begin &#9658;");	
+		}
+		else
+		{
+			$("#indicator").html(" Replay &#9658;");	
+		}
 	}
 	else
 	{
@@ -281,18 +289,6 @@ playerHand.renderCards = function()
 	}
 
 	game.hideProcessingMessage();
-/*
-	if (game.round == 0 )
-	{
-		if (playerHand.cards.length > 0)
-		{
-			game.showProcessingMessage("Click on any of the cards to unassign and return them to your deck. &#9660;", "");
-		}
-		else
-		{
-			game.hideProcessingMessage();
-		}
-	}*/
 };
 
 playerHand.showEditDefence = function(index, pts)
@@ -348,7 +344,7 @@ playerDeck.playCard = function (card)
 
 	playerHand.handGlow("playerHand_" + (playerHand.cards.length - 1), 1);
 
-	card.playSpecial();		
+	card.playSpecial(playerHand.cards.length - 1, "player");		
 };
 
 botHand.renderCards = function()
@@ -410,36 +406,45 @@ botHand.showEditDefence = function(index, pts)
 
 botDeck.playRandomCard = function ()
 {
-	var handCardIds = [];
-
-	$(botHand.cards).each
-	(
-		function (x)
-		{
-			handCardIds.push(botHand.cards[x].id);
-		}
-	);
-
-	var availableToPlay = this.getAvailableCards(handCardIds);
-
-	if (availableToPlay.length > 0)
+	if (botHand.cards.length < botHand.maxCards)
 	{
-		game.paused = false;
-		var added = false;
+		var handCardIds = [];
 
-		var i = config.generateRandomNo(0, availableToPlay.length -1);
-		var id = availableToPlay[i];
+		$(botHand.cards).each
+		(
+			function (x)
+			{
+				handCardIds.push(botHand.cards[x].id);
+			}
+		);
 
-		if (handCardIds.indexOf(id) == -1)
+		var availableToPlay = this.getAvailableCards(handCardIds);
+
+		if (availableToPlay.length > 0)
 		{
-			botDeck.playCard(botDeck.findCardById(id));
-		}	
+			game.paused = false;
+			var added = false;
+
+			var i = config.generateRandomNo(0, availableToPlay.length -1);
+			var id = availableToPlay[i];
+
+			if (handCardIds.indexOf(id) == -1)
+			{
+				botDeck.playCard(botDeck.findCardById(id));
+			}	
+		}
+		else
+		{
+			game.paused = true;
+			game.hideProcessingMessage();
+			playerDeck.renderCards();
+		}
 	}
 	else
 	{
 		game.paused = true;
 		game.hideProcessingMessage();
-		playerDeck.renderCards();
+		playerDeck.renderCards();		
 	}
 };
 
@@ -451,7 +456,7 @@ botDeck.playCard = function (card)
 
 	botHand.handGlow("botHand_" + (botHand.cards.length - 1), 1);
 
-	card.playSpecial();		
+	card.playSpecial(botHand.cards.length - 1, "bot");		
 
 	setTimeout
 	(
