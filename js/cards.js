@@ -184,6 +184,8 @@ var objCard =
 	editTurnsToLive: function(pts) 
 	{
 		this.turnsToLive = this.turnsToLive + pts;
+
+		if (this.turnsToLive < 0) this.turnsToLive = 0;
 	},
 	attack: function(index, wokeRating) 
 	{
@@ -1744,11 +1746,11 @@ newCard.details =
 [
 	{
 		"title" : "Jumping the Gun", 
-		"description": "On play, there is a <b>" + config.medium + "0%</b> chance for your opponent to lose <b>Likes</b> equal to the number of your <b>Woke Points</b>.",
+		"description": "&checkmark;On play, there is a <b>" + config.medium + "0%</b> chance for your opponent to lose <b>Likes</b> equal to the number of your <b>Woke Points</b>.",
 	},
 	{
 		"title" : "Doxxing",
-		"description": "Your opponent loses <b>" + config.minor + "</b> <b>Likes</b> with every attack by this card."
+		"description": "&checkmark;Your opponent loses <b>" + config.minor + "</b> <b>Likes</b> with every attack by this card."
 	}
 ];
 newCard.race = "Neutral";
@@ -1794,20 +1796,62 @@ newCard = Object.assign({}, objCard);
 newCard.id = "antivaxxers";
 newCard.title = "Anti-vaxxers";
 newCard.subTitle = "";
-newCard.details = [];
+newCard.details = 
+[
+	{
+		"title" : "Mother Knows Best", 
+		"description": "&checkmark;If there is a <b>Maternity Card</b> in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
+	},
+	{
+		"title" : "Mutually Assured Destruction",
+		"description": "&checkmark;Upon being <b>Triggered</b>, deal <b>" + config.medium + "</b> damage to opposing card."
+	}
+];
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
-newCard.destroySpecial = function()
-{
-	//this.destroyCard();
-};
 newCard.attackSpecial = function(index)
 {
-	//this.attackCard();
+	if (game.turnAttacker == "bot")
+	{
+		if (botHand.findCardById("maternity").length != [])
+		{
+			this.onEditAttack(this.baseAttack, "#botHand_" + index + " .att_" + this.id);
+			bot.showSpecial(this.id, 0, index);
+		}
+	}
+
+	if (game.turnAttacker == "player")
+	{
+		if (playerHand.findCardById("maternity").length != [])
+		{
+			this.onEditAttack(this.baseAttack, "#playerHand_" + index + " .att_" + this.id);
+			player.showSpecial(this.id, 0, index);
+		}
+	}
+};
+newCard.destroySpecial = function(index)
+{
+	if (game.turnAttacker == "bot") 
+	{
+		if (botHand.cards[index] != null)
+		{//TODO: cater for turnstoLive botHand.cards[index].onEditTurnsToLive(card.wokeRating);
+			botHand.cards[index].onEditDefence(-config.medium, "#botHand_" + index + " .def_" + botHand.cards[index].id);
+			player.showSpecial(this.id, 1, index);
+		}
+	}
+
+	if (game.turnAttacker == "player") 
+	{
+		if (playerHand.cards[index] != null)
+		{
+			playerHand.cards[index].onEditDefence(-config.medium, "#playerHand_" + index + " .def_" + playerHand.cards[index].id);
+			bot.showSpecial(this.id, 1, index);
+		}
+	}	
 };
 cardTemplates.push(newCard);
 
@@ -2257,20 +2301,101 @@ newCard = Object.assign({}, objCard);
 newCard.id = "race";
 newCard.title = "Race Card";
 newCard.subTitle = "Black lives matter!";
-newCard.details = [];
+newCard.details = 
+[
+	{
+		"title" : "Enhanced Recovery", //in game
+		"description": "&checkmark;Every round, all <b>Minority</b> cards in the <b>Safe Space</b> recover an additional <b>" + config.minor + "</b> rounds faster."
+	},
+	{
+		"title" : "Sacrificial Solidarity", 
+		"description": "&checkmark;Upon being <b>Triggered</b>, all <b>Minority</b> cards gain <b>" + config.medium + "</b> to Defence."
+	},
+	{
+		"title" : "Xenophobe Destruction",
+		"description": "&checkmark;On play, if played opposite a <b>Xenophobe</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
+	}
+];
 newCard.race = "Minority";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
-newCard.destroySpecial = function()
+newCard.destroySpecial = function(index)
 {
-	//this.destroyCard();
+	var activated = 0;
+
+	if (game.turnAttacker == "bot") 
+	{
+		$(playerHand.cards).each
+		(
+			function (playerIndex)
+			{
+				if (playerHand.cards[playerIndex] != null)
+				{
+					if (playerHand.cards[playerIndex].race == "Minority")
+					{
+						playerHand.cards[playerIndex].onEditDefence(config.medium, "#playerHand_" + playerIndex + " .def_" + playerHand.cards[playerIndex].id);
+						activated ++;
+					}
+				}
+			}
+		);
+
+		if (activated > 0)
+		{
+			player.showSpecial(this.id, 1, index);
+		}
+	}
+
+	if (game.turnAttacker == "player") 
+	{
+		$(botHand.cards).each
+		(
+			function (botIndex)
+			{
+				if (botHand.cards[botIndex] != null)
+				{
+					if (botHand.cards[botIndex].race == "Minority")
+					{
+						botHand.cards[botIndex].onEditDefence(config.medium, "#botHand_" + botIndex + " .def_" + botHand.cards[botIndex].id);
+						activated ++;
+					}
+				}
+			}
+		);
+
+		if (activated > 0)
+		{
+			bot.showSpecial(this.id, 1, index);
+		}
+	}
 };
-newCard.attackSpecial = function(index)
-{
-	//this.attackCard();
+newCard.playSpecial = function(index, attacker)
+{	
+	if (config.generateRandomNo(1, 100) <= (config.medium * 10))
+	{
+		if (attacker == "bot")
+		{
+			if (botHand.cards[index].id == "xenophobe")
+			{
+				playerHand.cards[index].editDefence(-playerHand.cards[index].newDefence);
+				playerHand.cards[index].onDestroy("#playerHand_" + index + " .def_" + playerHand.cards[index].id);
+				bot.showSpecial(this.id, 2, index);
+			}
+		}
+
+		if (attacker == "player")
+		{
+			if (botHand.cards[index].id == "xenophobe")
+			{
+				botHand.cards[index].editDefence(-botHand.cards[index].newDefence);
+				botHand.cards[index].onDestroy("#botHand_" + index + " .def_" + botHand.cards[index].id);	
+				player.showSpecial(this.id, 2, index);
+			}
+		}
+	}
 };
 cardTemplates.push(newCard);
 

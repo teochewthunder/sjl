@@ -200,6 +200,16 @@ var game =
 					}
 
 					playerDeck.cards[index].onEditTurnsToLive(-1);
+
+					//Enhanced Safe Space Recovery
+					if (playerDeck.cards[index].turnsToLive > 0)
+					{
+						if (playerDeck.cards[index].race == "Minority" && playerHand.findCardById("race") != [])
+						{
+							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
+							player.showSpecial("race", playerHand.findSlotById("race"), index);
+						}
+					}
 				}					
 			}
 		);
@@ -208,7 +218,10 @@ var game =
 		(
 			function (index)
 			{
-				playerHand.cards[index].roundSpecial(index, "player");
+				if (playerHand.cards[index] != null)
+				{
+					playerHand.cards[index].roundSpecial(index, "player");
+				}
 			}
 		);
 
@@ -224,6 +237,16 @@ var game =
 					}
 
 					botDeck.cards[index].onEditTurnsToLive(-1);
+
+					//Enhanced Safe Space Recovery
+					if (botDeck.cards[index].turnsToLive > 0)
+					{
+						if (botDeck.cards[index].race == "Minority" && botHand.findCardById("race") != [])
+						{
+							botDeck.cards[index].onEditTurnsToLive(-config.minor);
+							bot.showSpecial("race", botHand.findSlotById("race"), index);
+						}
+					}
 				}					
 			}
 		);
@@ -232,7 +255,10 @@ var game =
 		(
 			function (index)
 			{
-				botHand.cards[index].roundSpecial(index, "bot");
+				if (botHand.cards[index] != null)
+				{
+					botHand.cards[index].roundSpecial(index, "bot");
+				}
 			}
 		);
 

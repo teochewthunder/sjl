@@ -67,7 +67,26 @@ var objPlaceholder =
 		{
 			return card[0];			
 		}
+	},
+	findSlotById: function(id)
+	{
+		var cardIndex = null;
 
+		$(this.cards).each
+		(
+			function (index, x)
+			{
+				if (x != null)
+				{
+					if (x.id == id)
+					{
+						cardIndex == index;
+					}					
+				}
+			}
+		);	
+
+		return cardIndex;
 	},
 	compactCards: function()
 	{
