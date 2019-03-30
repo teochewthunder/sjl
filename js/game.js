@@ -204,11 +204,29 @@ var game =
 					//Enhanced Safe Space Recovery
 					if (playerDeck.cards[index].turnsToLive > 0)
 					{
-						if (playerDeck.cards[index].race == "Minority" && playerHand.findCardById("race") != [])
+						var raceCardSlot = playerHand.findSlotById("race");
+
+						if (playerDeck.cards[index].race == "Minority" && raceCardSlot != null)
 						{
 							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
-							player.showSpecial("race", playerHand.findSlotById("race"), index);
+							player.showSpecial("race", raceCardSlot, index);
 						}
+
+						var genderCardSlot = playerHand.findSlotById("gender");
+
+						if (playerDeck.cards[index].gender == "Female" && genderCardSlot != null)
+						{
+							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
+							player.showSpecial("gender", genderCardSlot, index);
+						}
+
+						var lgbtCardSlot = playerHand.findSlotById("lgbt");
+
+						if (playerDeck.cards[index].sexualOrientation == "LGBT" && lgbtCardSlot != null)
+						{
+							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
+							player.showSpecial("lgbt", lgbtCardSlot, index);
+						}							
 					}
 				}					
 			}
@@ -241,10 +259,28 @@ var game =
 					//Enhanced Safe Space Recovery
 					if (botDeck.cards[index].turnsToLive > 0)
 					{
-						if (botDeck.cards[index].race == "Minority" && botHand.findCardById("race") != [])
+						var raceCardSlot = playerHand.findSlotById("race");
+
+						if (botDeck.cards[index].race == "Minority" && raceCardSlot != null)
 						{
 							botDeck.cards[index].onEditTurnsToLive(-config.minor);
-							bot.showSpecial("race", botHand.findSlotById("race"), index);
+							bot.showSpecial("race", raceCardSlot, index);
+						}
+
+						var genderCardSlot = playerHand.findSlotById("gender");
+
+						if (botDeck.cards[index].gender == "Female" && genderCardSlot != null)
+						{
+							botDeck.cards[index].onEditTurnsToLive(-config.minor);
+							bot.showSpecial("gender", genderCardSlot, index);
+						}
+
+						var lgbtCardSlot = playerHand.findSlotById("lgbt");
+
+						if (botDeck.cards[index].sexualOrientation == "LGBT" && lgbtCardSlot != null)
+						{
+							botDeck.cards[index].onEditTurnsToLive(-config.minor);
+							bot.showSpecial("lgbt", lgbtCardSlot, index);
 						}
 					}
 				}					
@@ -462,14 +498,6 @@ $(document).ready(function() {
 
 	//init
 	game.init();
-	/*
-	$("#botStatWokePoints").html(bot.wokePoints);
-	$("#botStatLikes").html(bot.likes);
-	$("#playerStatWokePoints").html(player.wokePoints);
-	$("#playerStatLikes").html(player.likes);
-	game.showProcessingMessage("Generating bot hand for first round...", "loading.gif");
-	botDeck.playRandomCard();
-	*/
 
 	//start
 	$("#btnRound").on

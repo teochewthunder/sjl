@@ -61,7 +61,7 @@ var objPlaceholder =
 
 		if (card.length == 0)
 		{
-			return card;
+			return [];
 		}
 		else
 		{
@@ -80,7 +80,7 @@ var objPlaceholder =
 				{
 					if (x.id == id)
 					{
-						cardIndex == index;
+						cardIndex = index;
 					}					
 				}
 			}

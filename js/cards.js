@@ -2378,21 +2378,27 @@ newCard.playSpecial = function(index, attacker)
 	{
 		if (attacker == "bot")
 		{
-			if (botHand.cards[index].id == "xenophobe")
+			if (playerHand.cards[index] != null)
 			{
-				playerHand.cards[index].editDefence(-playerHand.cards[index].newDefence);
-				playerHand.cards[index].onDestroy("#playerHand_" + index + " .def_" + playerHand.cards[index].id);
-				bot.showSpecial(this.id, 2, index);
+				if (playerHand.cards[index].id == "xenophobe")
+				{
+					playerHand.cards[index].editDefence(-playerHand.cards[index].newDefence);
+					playerHand.cards[index].onDestroy("#playerHand_" + index + " .def_" + playerHand.cards[index].id);
+					bot.showSpecial(this.id, 2, index);
+				}
 			}
 		}
 
 		if (attacker == "player")
 		{
-			if (botHand.cards[index].id == "xenophobe")
+			if (botHand.cards[index] != null)
 			{
-				botHand.cards[index].editDefence(-botHand.cards[index].newDefence);
-				botHand.cards[index].onDestroy("#botHand_" + index + " .def_" + botHand.cards[index].id);	
-				player.showSpecial(this.id, 2, index);
+				if (botHand.cards[index].id == "xenophobe")
+				{
+					botHand.cards[index].editDefence(-botHand.cards[index].newDefence);
+					botHand.cards[index].onDestroy("#botHand_" + index + " .def_" + botHand.cards[index].id);	
+					player.showSpecial(this.id, 2, index);
+				}				
 			}
 		}
 	}
@@ -2403,20 +2409,107 @@ newCard = Object.assign({}, objCard);
 newCard.id = "gender";
 newCard.title = "Gender Card";
 newCard.subTitle = "Down with the Patriarchy!";
-newCard.details = [];
+newCard.details = 
+[
+	{
+		"title" : "Enhanced Recovery", //in game
+		"description": "Every round, all <b>Female</b> cards in the <b>Safe Space</b> recover an additional <b>" + config.minor + "</b> rounds faster."
+	},
+	{
+		"title" : "Sacrificial Solidarity", 
+		"description": "Upon being <b>Triggered</b>, all <b>Female</b> cards gain <b>" + config.medium + "</b> to Defence."
+	},
+	{
+		"title" : "Misogynist Destruction",
+		"description": "On play, if played opposite a <b>Misogynist</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
+	}
+];
 newCard.race = "Neutral";
 newCard.gender = "Female";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
-newCard.destroySpecial = function()
+newCard.destroySpecial = function(index)
 {
-	//this.destroyCard();
+	var activated = 0;
+
+	if (game.turnAttacker == "bot") 
+	{
+		$(playerHand.cards).each
+		(
+			function (playerIndex)
+			{
+				if (playerHand.cards[playerIndex] != null)
+				{
+					if (playerHand.cards[playerIndex].gender == "Female")
+					{
+						playerHand.cards[playerIndex].onEditDefence(config.medium, "#playerHand_" + playerIndex + " .def_" + playerHand.cards[playerIndex].id);
+						activated ++;
+					}
+				}
+			}
+		);
+
+		if (activated > 0)
+		{
+			player.showSpecial(this.id, 1, index);
+		}
+	}
+
+	if (game.turnAttacker == "player") 
+	{
+		$(botHand.cards).each
+		(
+			function (botIndex)
+			{
+				if (botHand.cards[botIndex] != null)
+				{
+					if (botHand.cards[botIndex].gender == "Female")
+					{
+						botHand.cards[botIndex].onEditDefence(config.medium, "#botHand_" + botIndex + " .def_" + botHand.cards[botIndex].id);
+						activated ++;
+					}
+				}
+			}
+		);
+
+		if (activated > 0)
+		{
+			bot.showSpecial(this.id, 1, index);
+		}
+	}
 };
-newCard.attackSpecial = function(index)
-{
-	//this.attackCard();
+newCard.playSpecial = function(index, attacker)
+{	
+	if (config.generateRandomNo(1, 100) <= (config.medium * 10))
+	{
+		if (attacker == "bot")
+		{
+			if (playerHand.cards[index] != null)
+			{
+				if (playerHand.cards[index].id == "misogynist")
+				{
+					playerHand.cards[index].editDefence(-playerHand.cards[index].newDefence);
+					playerHand.cards[index].onDestroy("#playerHand_" + index + " .def_" + playerHand.cards[index].id);
+					bot.showSpecial(this.id, 2, index);
+				}				
+			}
+		}
+
+		if (attacker == "player")
+		{
+			if (botHand.cards[index] != null)
+			{
+				if (botHand.cards[index].id == "misogynist")
+				{
+					botHand.cards[index].editDefence(-botHand.cards[index].newDefence);
+					botHand.cards[index].onDestroy("#botHand_" + index + " .def_" + botHand.cards[index].id);	
+					player.showSpecial(this.id, 2, index);
+				}				
+			}
+		}
+	}
 };
 cardTemplates.push(newCard);
 
@@ -2445,20 +2538,107 @@ newCard = Object.assign({}, objCard);
 newCard.id = "lgbt";
 newCard.title = "LGBT Card";
 newCard.subTitle = "Straight people oppress us!";
-newCard.details = [];
+newCard.details = 
+[
+	{
+		"title" : "Enhanced Recovery", //in game
+		"description": "Every round, all <b>LGBT</b> cards in the <b>Safe Space</b> recover an additional <b>" + config.minor + "</b> rounds faster."
+	},
+	{
+		"title" : "Sacrificial Solidarity", 
+		"description": "Upon being <b>Triggered</b>, all <b>LGBT</b> cards gain <b>" + config.medium + "</b> to Defence."
+	},
+	{
+		"title" : "Homophobe Destruction",
+		"description": "On play, if played opposite a <b>Homophobe</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
+	}
+];
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "LGBT";
 newCard.baseAttack = config.major;
 newCard.baseDefence = config.major;
 newCard.wokeRating = config.major;
-newCard.destroySpecial = function()
+newCard.destroySpecial = function(index)
 {
-	//this.destroyCard();
+	var activated = 0;
+
+	if (game.turnAttacker == "bot") 
+	{
+		$(playerHand.cards).each
+		(
+			function (playerIndex)
+			{
+				if (playerHand.cards[playerIndex] != null)
+				{
+					if (playerHand.cards[playerIndex].sexualOrientation == "LGBT")
+					{
+						playerHand.cards[playerIndex].onEditDefence(config.medium, "#playerHand_" + playerIndex + " .def_" + playerHand.cards[playerIndex].id);
+						activated ++;
+					}
+				}
+			}
+		);
+
+		if (activated > 0)
+		{
+			player.showSpecial(this.id, 1, index);
+		}
+	}
+
+	if (game.turnAttacker == "player") 
+	{
+		$(botHand.cards).each
+		(
+			function (botIndex)
+			{
+				if (botHand.cards[botIndex] != null)
+				{
+					if (botHand.cards[botIndex].sexualOrientation == "LGBT")
+					{
+						botHand.cards[botIndex].onEditDefence(config.medium, "#botHand_" + botIndex + " .def_" + botHand.cards[botIndex].id);
+						activated ++;
+					}
+				}
+			}
+		);
+
+		if (activated > 0)
+		{
+			bot.showSpecial(this.id, 1, index);
+		}
+	}
 };
-newCard.attackSpecial = function(index)
-{
-	//this.attackCard();
+newCard.playSpecial = function(index, attacker)
+{	
+	if (config.generateRandomNo(1, 100) <= (config.medium * 10))
+	{
+		if (attacker == "bot")
+		{
+			if (playerHand.cards[index] != null)
+			{
+				if (playerHand.cards[index].id == "homophobe")
+				{
+					playerHand.cards[index].editDefence(-playerHand.cards[index].newDefence);
+					playerHand.cards[index].onDestroy("#playerHand_" + index + " .def_" + playerHand.cards[index].id);
+					bot.showSpecial(this.id, 2, index);
+				}				
+			}
+		}
+
+		if (attacker == "player")
+		{
+			if (botHand.cards[index] != null)
+			{
+				if (botHand.cards[index].id == "homophobe")
+				{
+					botHand.cards[index].editDefence(-botHand.cards[index].newDefence);
+					botHand.cards[index].onDestroy("#botHand_" + index + " .def_" + botHand.cards[index].id);	
+					player.showSpecial(this.id, 2, index);
+				}				
+			}
+		}
+	}
 };
 cardTemplates.push(newCard);
 
