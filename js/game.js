@@ -209,7 +209,7 @@ var game =
 						if (playerDeck.cards[index].race == "Minority" && raceCardSlot != null)
 						{
 							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
-							player.showSpecial("race", raceCardSlot, index);
+							player.showSpecial("race", 0, raceCardSlot);
 						}
 
 						var genderCardSlot = playerHand.findSlotById("gender");
@@ -217,7 +217,7 @@ var game =
 						if (playerDeck.cards[index].gender == "Female" && genderCardSlot != null)
 						{
 							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
-							player.showSpecial("gender", genderCardSlot, index);
+							player.showSpecial("gender", 0, genderCardSlot);
 						}
 
 						var lgbtCardSlot = playerHand.findSlotById("lgbt");
@@ -225,8 +225,32 @@ var game =
 						if (playerDeck.cards[index].sexualOrientation == "LGBT" && lgbtCardSlot != null)
 						{
 							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
-							player.showSpecial("lgbt", lgbtCardSlot, index);
-						}							
+							player.showSpecial("lgbt", 0, lgbtCardSlot);
+						}	
+
+						var maternityCardSlot = playerHand.findSlotById("materity");
+
+						if (playerDeck.cards[index].sexualOrientation == "Hetero" && playerDeck.cards[index].gender == "Female" && maternityCardSlot != null)
+						{
+							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
+							player.showSpecial("lgbt", 0, maternityCardSlot);
+						}	
+
+						var victimCardSlot = playerHand.findSlotById("victim");
+
+						if ((playerDeck.cards[index].sexualOrientation == "LGBT" || playerDeck.cards[index].race == "Minority") && playerDeck.cards[index].gender == "Female" && victimCardSlot != null)
+						{
+							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
+							player.showSpecial("victim", 0, victimCardSlot);
+						}	
+
+						var naziCardSlot = playerHand.findSlotById("nazi");
+
+						if ((playerDeck.cards[index].gender == "Male" || playerDeck.cards[index].race == "White") && playerDeck.cards[index].sexualOrientation == "Hetero" && naziCardSlot != null)
+						{
+							playerDeck.cards[index].onEditTurnsToLive(-config.minor);
+							player.showSpecial("nazi", 0, naziCardSlot);
+						}					
 					}
 				}					
 			}
@@ -259,28 +283,52 @@ var game =
 					//Enhanced Safe Space Recovery
 					if (botDeck.cards[index].turnsToLive > 0)
 					{
-						var raceCardSlot = playerHand.findSlotById("race");
+						var raceCardSlot = botHand.findSlotById("race");
 
 						if (botDeck.cards[index].race == "Minority" && raceCardSlot != null)
 						{
 							botDeck.cards[index].onEditTurnsToLive(-config.minor);
-							bot.showSpecial("race", raceCardSlot, index);
+							bot.showSpecial("race", 0, raceCardSlot);
 						}
 
-						var genderCardSlot = playerHand.findSlotById("gender");
+						var genderCardSlot = botHand.findSlotById("gender");
 
 						if (botDeck.cards[index].gender == "Female" && genderCardSlot != null)
 						{
 							botDeck.cards[index].onEditTurnsToLive(-config.minor);
-							bot.showSpecial("gender", genderCardSlot, index);
+							bot.showSpecial("gender", 0, genderCardSlot);
 						}
 
-						var lgbtCardSlot = playerHand.findSlotById("lgbt");
+						var lgbtCardSlot = botHand.findSlotById("lgbt");
 
 						if (botDeck.cards[index].sexualOrientation == "LGBT" && lgbtCardSlot != null)
 						{
 							botDeck.cards[index].onEditTurnsToLive(-config.minor);
-							bot.showSpecial("lgbt", lgbtCardSlot, index);
+							bot.showSpecial("lgbt", 0, lgbtCardSlot);
+						}
+
+						var maternityCardSlot = botHand.findSlotById("materity");
+
+						if (botDeck.cards[index].sexualOrientation == "Hetero" && botDeck.cards[index].gender == "Female" && maternityCardSlot != null)
+						{
+							botDeck.cards[index].onEditTurnsToLive(-config.minor);
+							bot.showSpecial("maternity", 0, maternityCardSlot);
+						}	
+
+						var victimCardSlot = botHand.findSlotById("victim");
+
+						if ((botDeck.cards[index].sexualOrientation == "LGBT" || botDeck.cards[index].race == "Minority") && botDeck.cards[index].gender == "Female" && victimCardSlot != null)
+						{
+							botDeck.cards[index].onEditTurnsToLive(-config.minor);
+							bot.showSpecial("victim", 0, victimCardSlot);
+						}
+
+						var naziCardSlot = botHand.findSlotById("nazi");
+
+						if ((botDeck.cards[index].gender == "Male" || botDeck.cards[index].race == "White") && botDeck.cards[index].sexualOrientation == "Hetero" && naziCardSlot != null)
+						{
+							botDeck.cards[index].onEditTurnsToLive(-config.minor);
+							bot.showSpecial("nazi", 0, naziCardSlot);
 						}
 					}
 				}					
