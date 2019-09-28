@@ -196,6 +196,57 @@ var objCard =
 		{
 			if (index < botHand.cards.length)
 			{
+				if (card.id == "moderate")
+				{
+					if (damage == 1)
+					{
+						player.onEditWokePoints(config.medium);
+						player.showSpecial("moderate", 0, index);
+					}
+				}
+
+				if (card.id == "extremist")
+				{
+					if (damage == card.baseAttack)
+					{
+						player.onEditWokePoints(config.medium);
+						player.showSpecial("extremist", 0, index);
+					}
+				}
+
+				if (botHand.findCardById("moderate").length != 0)
+				{
+					if (card.id == "feminazi" || card.id == "misogynist" || card.id == "homophobe" || card.id == "xenophobe")
+					{
+						if (config.generateRandomNo(1, 100) <= (config.minor * 10))
+						{
+							damage = 1;
+							bot.showSpecial("moderate", 1, botHand.findSlotById("moderate"));
+						}
+					}
+				}
+
+				if (playerHand.findCardById("extremist").length != 0)
+				{
+					if (card.id == "feminazi" || card.id == "misogynist" || card.id == "homophobe" || card.id == "xenophobe")
+					{
+						if (config.generateRandomNo(1, 100) <= (config.minor * 10))
+						{
+							damage = card.baseAttack;
+							player.showSpecial("extremist", 1, playerHand.findSlotById("extremist"));
+						}
+					}
+				}
+
+				if (botHand.findCardById("tonepolice").length != 0)
+				{
+					if (config.generateRandomNo(1, 100) <= (config.minor * 10))
+					{
+						damage = 1;
+						bot.showSpecial("tonepolice", 0, botHand.findSlotById("tonepolice"));
+					}
+				}
+
 				if (botHand.cards[index] == null)
 				{
 					bot.onEditLikes(-damage);
@@ -224,15 +275,6 @@ var objCard =
 					{
 						player.onEditWokePoints(-config.minor);
 						bot.showSpecial("pcbrigade", 0, botHand.findSlotById("pcbrigade"));
-					}
-
-					if (botHand.findCardById("tonepolice").length != 0)
-					{
-						if (config.generateRandomNo(1, 100) <= (config.minor * 10))
-						{
-							damage = 1;
-							bot.showSpecial("tonepolice", 0, botHand.findSlotById("tonepolice"));
-						}
 					}
 
 					if (botHand.findCardById("wknight").length != 0 && botHand.cards[index].gender == "Female" && playerHand.cards[index].gender == "Male")
@@ -316,6 +358,57 @@ var objCard =
 		{
 			if (index < playerHand.cards.length)
 			{
+				if (card.id == "moderate")
+				{
+					if (damage == 1)
+					{
+						bot.onEditWokePoints(config.medium);
+						bot.showSpecial("moderate", 0, index);
+					}
+				}
+
+				if (card.id == "extremist")
+				{
+					if (damage == card.baseAttack)
+					{
+						bot.onEditWokePoints(config.medium);
+						bot.showSpecial("extremist", 0, index);
+					}
+				}
+
+				if (playerHand.findCardById("moderate").length != 0)
+				{
+					if (card.id == "feminazi" || card.id == "misogynist" || card.id == "homophobe" || card.id == "xenophobe")
+					{
+						if (config.generateRandomNo(1, 100) <= (config.minor * 10))
+						{
+							damage = 1;
+							player.showSpecial("moderate", 1, playerHand.findSlotById("moderate"));
+						}
+					}
+				}
+
+				if (botHand.findCardById("extremist").length != 0)
+				{
+					if (card.id == "feminazi" || card.id == "misogynist" || card.id == "homophobe" || card.id == "xenophobe")
+					{
+						if (config.generateRandomNo(1, 100) <= (config.minor * 10))
+						{
+							damage = card.baseAttack;
+							bot.showSpecial("extremist", 1, botHand.findSlotById("extremist"));
+						}
+					}
+				}
+
+				if (playerHand.findCardById("tonepolice").length != 0)
+				{
+					if (config.generateRandomNo(1, 100) <= (config.minor * 10))
+					{
+						damage = 1;
+						player.showSpecial("tonepolice", 0, playerHand.findSlotById("tonepolice"));
+					}
+				}
+
 				if (playerHand.cards[index] == null)
 				{
 					player.onEditLikes(-damage);
@@ -344,15 +437,6 @@ var objCard =
 					{
 						bot.onEditWokePoints(-config.minor);
 						player.showSpecial("pcbrigade", 0, playerHand.findSlotById("pcbrigade"));
-					}
-
-					if (playerHand.findCardById("tonepolice").length != 0)
-					{
-						if (config.generateRandomNo(1, 100) <= (config.minor * 10))
-						{
-							damage = 1;
-							player.showSpecial("tonepolice", 0, playerHand.findSlotById("tonepolice"));
-						}
 					}
 
 					if (playerHand.findCardById("wknight").length != 0 && playerHand.cards[index].gender == "Female" && botHand.cards[index].gender == "Male")
@@ -2764,42 +2848,46 @@ newCard = Object.assign({}, objCard);
 newCard.id = "extremist";
 newCard.title = "Extremist";
 newCard.subTitle = "There are no neutrals. Pick a side!";
-newCard.details = [];
+newCard.details = 
+[
+	{
+		"title" : "No Kill Like Overkill", 
+		"description": "&checkmark;Every time this card does maximum damage on an <b>Attack</b>, gain <b>" + config.medium + "</b> <b>Woke Points</b>.",
+	},
+	{
+		"title" : "Extremism Encouragement",
+		"description": "&checkmark;If this card is in your <b>Hand</b>, <b>Xenophobe</b>, <b>Feminazi</b>, <b>Homophobe</b> and <b>Misogynist</b> cards have a <b>" + config.minor + "0%</b> chance of doing maximum damage."
+	}
+];
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
-newCard.destroySpecial = function()
-{
-	//this.destroyCard();
-};
-newCard.attackSpecial = function(index)
-{
-	//this.attackCard();
-};
 cardTemplates.push(newCard);
 
 newCard = Object.assign({}, objCard);
 newCard.id = "moderate";
 newCard.title = "Moderate";
 newCard.subTitle = "There are two sides to a coin.";
-newCard.details = [];
+newCard.details = 
+[
+	{
+		"title" : "Light Touch", 
+		"description": "&checkmark;Every time this card does minimum damage on an <b>Attack</b>, gain <b>" + config.medium + "</b> <b>Woke Points</b>.",
+	},
+	{
+		"title" : "Everything in Moderation",
+		"description": "&checkmark;If this card is in your <b>Hand</b>, <b>Xenophobe</b>, <b>Feminazi</b>, <b>Homophobe</b> and <b>Misogynist</b> cards in your opponent's <b>Hand</b> have a <b>" + config.minor + "0%</b> chance of doing minimum damage."
+	}
+];
 newCard.race = "Neutral";
 newCard.gender = "Neutral";
 newCard.sexualOrientation = "Neutral";
 newCard.baseAttack = config.medium;
 newCard.baseDefence = config.medium;
 newCard.wokeRating = config.medium;
-newCard.destroySpecial = function()
-{
-	//this.destroyCard();
-};
-newCard.attackSpecial = function(index)
-{
-	//this.attackCard();
-};
 cardTemplates.push(newCard);
 
 newCard = Object.assign({}, objCard);
