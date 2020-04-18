@@ -425,7 +425,9 @@ botHand.showEditDefence = function(index, pts)
 
 botDeck.playRandomCard = function ()
 {
-	if (botHand.cards.length < botHand.maxCards)
+	var stopPlaying = (config.minor > config.generateRandomNo(0, config.major)); //randomly stop playing cards
+
+	if (botHand.cards.length < botHand.maxCards && !stopPlaying)
 	{
 		var handCardIds = [];
 
