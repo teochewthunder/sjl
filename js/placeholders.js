@@ -426,6 +426,7 @@ botHand.showEditDefence = function(index, pts)
 botDeck.playRandomCard = function ()
 {
 	var stopPlaying = (config.minor > config.generateRandomNo(0, config.major)); //randomly stop playing cards
+	stopPlaying = ((game.round == 0 && botHand.cards.length == 0) ? false : stopPlaying); //if first round, play at least 1 card
 
 	if (botHand.cards.length < botHand.maxCards && !stopPlaying)
 	{

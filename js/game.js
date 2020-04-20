@@ -150,6 +150,28 @@ var game =
 
 		return table;
 	},
+	getHelp()
+	{
+		var content = "";
+		content += "<h1>Players</h1>";
+		content += "<p>Each player starts the game with a certain number of <b>Woke Points</b>. <b>Woke Points</b> are used to play cards from the player's deck. They may be deducted via special attacks, or replenished after <b>Triggering</b> an opposing card.</p>";
+		content += "<p>Each player starts the game with a certain number of <b>Likes</b>. <b>Likes</b> deducted when cards have no opposing cards to attack, and attack the opposing player instead, or use a spcial attack. Some cards may replenish <b>Likes</b>. The first player to reach zero <b>Likes</b>, loses the game.</p>";
+		content += "<p>Each player has a deck of cards, of which up to 10 may be played in hand at any time.</p>";
+		content += "<hr />";
+		content += "<h1>Cards</h1>";
+		content += "<p>At the start of every round, each player may play cards from the deck, in hand. Each card in hand will take turns to attack the opposite card in the opponent's hand every round.</p>";
+		content += "<p>Cards have the following attributes:</p>";
+		content += "<p><b>Attack</b> - This is the maximum damage a card normally does, less bonuses. A card will deal at least 1 point of damage.</p>";
+		content += "<p><b>Defence</b> - This is the maximum amount of damage a card will take before it is <b>Triggered</b>.</p>";
+		content += "<p><b>Woke Rating</b> - This is the number of <b>Woke Points</b> needed to play the card. This statistic also determines how many rounds a card must stay in the <b>Safe Space</b> after it is <b>Triggered</b> by this card.</p>";
+		content += "<hr />";
+		content += "<h1>Safe Space</h1>";
+		content += "<p>When a card reaches 0 <b>Defence</b>, it has been <b>Triggered</b>. It must be taken out of play and consigned to the deck, where it is unavailable to play until a certain number of rounds has passed. This is called the <b>Safe Space</b>.</p>";
+		content += "<hr />";
+		content += "<h1>Gameplay</h1>";
+		content += "<p>Click on cards in your deck to play them. Click on the button <span class='greybutton'>Round 1 Begin &#9658;</span> to begin any round.</p>";
+		return content;
+	},
 	showProcessingMessage: function(txt, img)
 	{
 		var message = txt;
@@ -541,6 +563,14 @@ $(document).ready(function() {
 		function(e)
 		{
 			game.openOverlay(game.getCardSummary());
+		}
+	)
+
+	$("#btnHelp").click
+	(
+		function(e)
+		{
+			game.openOverlay(game.getHelp);
 		}
 	)
 

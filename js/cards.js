@@ -722,7 +722,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Attack",
-		"description": "&checkmark;If there is a <b>Male</b> or <b>White</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
+		"description": "If there is a <b>Male</b> or <b>White</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
 	}
 ];
 newCard.race = "White";
@@ -779,7 +779,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Defense",
-		"description": "&checkmark;&checkmark;If there is a <b>Female</b> or <b>White</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
+		"description": "If there is a <b>Female</b> or <b>White</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
 	}
 ];
 newCard.race = "White";
@@ -824,7 +824,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Attack",
-		"description": "&checkmark;If there is a <b>Male</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
+		"description": "If there is a <b>Male</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
 	}
 ];
 newCard.race = "Minority";
@@ -881,7 +881,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Defense",
-		"description": "&checkmark;If there is a <b>Female</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
+		"description": "If there is a <b>Female</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
 	}
 ];
 newCard.race = "Minority";
@@ -926,7 +926,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Attack",
-		"description": "&checkmark;If there is a <b>Male</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
+		"description": "If there is a <b>Male</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
 	}
 ];
 newCard.race = "Minority";
@@ -983,7 +983,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Defense",
-		"description": "&checkmark;If there is a <b>Female</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
+		"description": "If there is a <b>Female</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
 	}
 ];
 newCard.race = "Minority";
@@ -1028,7 +1028,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Attack",
-		"description": "&checkmark;If there is a <b>Male</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
+		"description": "If there is a <b>Male</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
 	}
 ];
 newCard.race = "Minority";
@@ -1085,7 +1085,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Defense",
-		"description": "&checkmark;If there is a <b>Female</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
+		"description": "If there is a <b>Female</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
 	}
 ];
 newCard.race = "Minority";
@@ -1130,7 +1130,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Attack",
-		"description": "&checkmark;If there is a <b>Male</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
+		"description": "If there is a <b>Male</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Attack</b> when attacking."
 	}
 ];
 newCard.race = "Minority";
@@ -1187,7 +1187,7 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Defense",
-		"description": "&checkmark;If there is a <b>Female</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
+		"description": "If there is a <b>Female</b> or <b>Minority</b> card adjacent to this card, add <b>" + config.medium + "</b> to <b>Defence</b> on play."
 	}
 ];
 newCard.race = "Minority";
@@ -1232,11 +1232,11 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Defense",
-		"description": "&checkmark;If there is a <b>Female</b> or <b>LGBT</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Defence</b> on play."
+		"description": "If there is a <b>Female</b> or <b>LGBT</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Defence</b> on play."
 	},
 	{
 		"title" : "Solidarity Attack",
-		"description": "&checkmark;If there is a <b>Male</b> or <b>LGBT</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
+		"description": "If there is a <b>Male</b> or <b>LGBT</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
 	}
 ];
 newCard.race = "Neutral";
@@ -1311,11 +1311,11 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Attack",
-		"description": "&checkmark;If there is a <b>Male</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
+		"description": "If there is a <b>Male</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
 	},
 	{
 		"title" : "LGBT Unity",
-		"description": "&checkmark;There is a <b>" + config.minor + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>LGBT</b> cards in hand every round."
+		"description": "There is a <b>" + config.minor + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>LGBT</b> cards in hand every round."
 	}
 ];
 newCard.race = "Neutral";
@@ -1393,11 +1393,11 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Defense",
-		"description": "&checkmark;If there is a <b>Female</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Defence</b> on play."
+		"description": "If there is a <b>Female</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Defence</b> on play."
 	},
 	{
 		"title" : "LGBT Unity",
-		"description": "&checkmark;There is a <b>" + config.minor + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>LGBT</b> cards in hand every round."
+		"description": "There is a <b>" + config.minor + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>LGBT</b> cards in hand every round."
 	}
 ];
 newCard.race = "Neutral";
@@ -1463,11 +1463,11 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Attack",
-		"description": "&checkmark;If there is a <b>Male</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
+		"description": "If there is a <b>Male</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
 	},
 	{
 		"title" : "LGBT Unity",
-		"description": "&checkmark;There is a <b>" + config.minor + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>LGBT</b> cards in hand every round."
+		"description": "There is a <b>" + config.minor + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>LGBT</b> cards in hand every round."
 	}
 ];
 newCard.race = "Neutral";
@@ -1545,11 +1545,11 @@ newCard.details =
 [
 	{
 		"title" : "Solidarity Defense",
-		"description": "&checkmark;If there is a <b>Female</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
+		"description": "If there is a <b>Female</b> card adjacent to this card, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
 	},
 	{
 		"title" : "LGBT Unity",
-		"description": "&checkmark;There is a <b>" + config.minor + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>LGBT</b> cards in hand every round."
+		"description": "There is a <b>" + config.minor + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>LGBT</b> cards in hand every round."
 	}
 ];
 newCard.race = "Neutral";
@@ -1615,11 +1615,11 @@ newCard.details =
 [
 	{
 		"title" : "Massive Burn", //in main class
-		"description": "&checkmark;Upon successfully <b>Triggering</b> any card, your opponent loses <b>" + config.minor + "</b> <b>Woke Points</b>.",
+		"description": "Upon successfully <b>Triggering</b> any card, your opponent loses <b>" + config.minor + "</b> <b>Woke Points</b>.",
 	},
 	{
 		"title" : "Having the Last Word",
-		"description": "&checkmark;When this card is <b>Triggered</b>, your opponent loses <b>" + config.medium + "</b> <b>Likes</b>.",
+		"description": "When this card is <b>Triggered</b>, your opponent loses <b>" + config.medium + "</b> <b>Likes</b>.",
 	},
 ];
 newCard.race = "Neutral";
@@ -1652,15 +1652,15 @@ newCard.details =
 [
 	{
 		"title" : "Safe Space Healing", //in game class
-		"description": "&checkmark;For every round this card spends in the <b>Safe Space</b>, gain <b>" + config.minor + "</b> <b>Defence</b>.",
+		"description": "For every round this card spends in the <b>Safe Space</b>, gain <b>" + config.minor + "</b> <b>Defence</b>.",
 	},
 	{
 		"title" : "Oppression Olympics",
-		"description": "&checkmark;If there is a <b>Victim Card</b> in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
+		"description": "If there is a <b>Victim Card</b> in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
 	},
 	{
 		"title" : "Martyr Complex",
-		"description": "&checkmark;When this card is <b>Triggered</b>, there is a <b>" + config.minor + "0%</b> to add the attacking card's <b>Woke Rating</b> to <b>Woke Points</b>.",
+		"description": "When this card is <b>Triggered</b>, there is a <b>" + config.minor + "0%</b> to add the attacking card's <b>Woke Rating</b> to <b>Woke Points</b>.",
 	},
 ];
 newCard.race = "Neutral";
@@ -1719,11 +1719,11 @@ newCard.details =
 [
 	{
 		"title" : "Humblebrag", //in main class
-		"description": "&checkmark;There is a <b>" + config.minor + "0%</b> chance to gain <b>Woke Points</b> for every point of damage done, when attacking.",
+		"description": "There is a <b>" + config.minor + "0%</b> chance to gain <b>Woke Points</b> for every point of damage done, when attacking.",
 	},
 	{
 		"title" : "Moral Posturing", //in main class
-		"description": "&checkmark;Upon successfully <b>Triggering</b> any card, gain <b>" + config.minor + "</b> <b>Defence</b>.",
+		"description": "Upon successfully <b>Triggering</b> any card, gain <b>" + config.minor + "</b> <b>Defence</b>.",
 	},
 	{
 		"title" : "Holier Than Thou", 
@@ -1773,11 +1773,11 @@ newCard.details =
 [
 	{
 		"title" : "Homophobia", 
-		"description": "&checkmark;Gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b> if target is a <b>LGBT</b> card.",
+		"description": "Gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b> if target is a <b>LGBT</b> card.",
 	},
 	{
 		"title" : "Hetero Unity",
-		"description": "&checkmark;There is a <b>" + config.medium + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>Hetero</b> cards in hand every round."
+		"description": "There is a <b>" + config.medium + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>Hetero</b> cards in hand every round."
 	}
 ];
 newCard.race = "Neutral";
@@ -1847,11 +1847,11 @@ newCard.details =
 [
 	{
 		"title" : "Xenophobia", 
-		"description": "&checkmark;Attack with a <b>x" + config.minor + "</b> bonus to <b>Attack</b> if target is a <b>Minority</b> card.",
+		"description": "Attack with a <b>x" + config.minor + "</b> bonus to <b>Attack</b> if target is a <b>Minority</b> card.",
 	},
 	{
 		"title" : "White Unity",
-		"description": "&checkmark;There is a <b>" + config.medium + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>White</b> cards in hand every round."
+		"description": "There is a <b>" + config.medium + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>White</b> cards in hand every round."
 	}
 ];
 newCard.race = "Neutral";
@@ -1921,11 +1921,11 @@ newCard.details =
 [
 	{
 		"title" : "Misogyny", 
-		"description": "&checkmark;Attack with a <b>x" + config.minor + "</b> bonus to <b>Attack</b> if target is a <b>Female</b> card.",
+		"description": "Attack with a <b>x" + config.minor + "</b> bonus to <b>Attack</b> if target is a <b>Female</b> card.",
 	},
 	{
 		"title" : "Gender Unity",
-		"description": "&checkmark;There is a <b>" + config.medium + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>Male</b> cards in hand every round."
+		"description": "There is a <b>" + config.medium + "0%</b> chance to gain <b>Defence</b> equal to the number of <b>Male</b> cards in hand every round."
 	}
 ];
 newCard.race = "Neutral";
@@ -1995,11 +1995,11 @@ newCard.details =
 [
 	{
 		"title" : "Jumping the Gun", 
-		"description": "&checkmark;On play, there is a <b>" + config.medium + "0%</b> chance for your opponent to lose <b>Likes</b> equal to the number of your <b>Woke Points</b>.",
+		"description": "On play, there is a <b>" + config.medium + "0%</b> chance for your opponent to lose <b>Likes</b> equal to the number of your <b>Woke Points</b>.",
 	},
 	{
 		"title" : "Doxxing",
-		"description": "&checkmark;Your opponent loses <b>" + config.minor + "</b> <b>Likes</b> with every attack by this card."
+		"description": "Your opponent loses <b>" + config.minor + "</b> <b>Likes</b> with every attack by this card."
 	}
 ];
 newCard.race = "Neutral";
@@ -2049,11 +2049,11 @@ newCard.details =
 [
 	{
 		"title" : "Mother Knows Best", 
-		"description": "&checkmark;If there is a <b>Maternity Card</b> in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
+		"description": "If there is a <b>Maternity Card</b> in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
 	},
 	{
 		"title" : "Mutually Assured Destruction",
-		"description": "&checkmark;Upon being <b>Triggered</b>, deal <b>" + config.medium + "</b> damage to opposing card."
+		"description": "Upon being <b>Triggered</b>, deal <b>" + config.medium + "</b> damage to opposing card."
 	}
 ];
 newCard.race = "Neutral";
@@ -2112,11 +2112,11 @@ newCard.details =
 [
 	{
 		"title" : "The woman in the mirror", 
-		"description": "&checkmark;Attack with a <b>+" + config.medium + "</b> bonus to <b>Attack</b> if target is a <b>Female</b> card.",
+		"description": "Attack with a <b>+" + config.medium + "</b> bonus to <b>Attack</b> if target is a <b>Female</b> card.",
 	},
 	{
 		"title" : "Self-loathing",
-		"description": "&checkmark;When <b>Triggered</b> by a <b>Male</b> card, gain <b>" + config.minor + " Woke Points</b>."
+		"description": "When <b>Triggered</b> by a <b>Male</b> card, gain <b>" + config.minor + " Woke Points</b>."
 	}
 ];
 newCard.race = "Neutral";
@@ -2181,11 +2181,11 @@ newCard.details =
 [
 	{
 		"title" : "Participation Bonus", 
-		"description": "&checkmark;On play, gain <b>" + config.medium + " Likes</b> for every other card in hand.",
+		"description": "On play, gain <b>" + config.medium + " Likes</b> for every other card in hand.",
 	},
 	{
 		"title" : "Something For Everyone",
-		"description": "&checkmark;Every round, all other cards in hand gain <b>" + config.minor + " Defence</b>."
+		"description": "Every round, all other cards in hand gain <b>" + config.minor + " Defence</b>."
 	}
 ];
 newCard.race = "Neutral";
@@ -2260,11 +2260,11 @@ newCard.details =
 [
 	{
 		"title" : "Violation of Intellectual Property", 
-		"description": "&checkmark;On play, there is a <b>" + config.medium + "%</b> chance to add opponent's <b>Woke Points</b> to your <b>Likes</b>.",
+		"description": "On play, there is a <b>" + config.medium + "%</b> chance to add opponent's <b>Woke Points</b> to your <b>Likes</b>.",
 	},
 	{
 		"title" : "Identity Theft",
-		"description": "&checkmark;When attacking, there is a <b>" + config.minor + "0%</b> chance to add the target card's <b>Woke Rating</b> to <b>Attack</b>."
+		"description": "When attacking, there is a <b>" + config.minor + "0%</b> chance to add the target card's <b>Woke Rating</b> to <b>Attack</b>."
 	}
 ];
 newCard.race = "Neutral";
@@ -2323,11 +2323,11 @@ newCard.details =
 [
 	{
 		"title" : "Internet Brigade", 
-		"description": "&checkmark;If there is a <b>Trial By Media</b> card in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
+		"description": "If there is a <b>Trial By Media</b> card in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
 	},
 	{
 		"title" : "Going viral", //in attack
-		"description": "&checkmark;When <b>Triggered</b>, take less <b>" + config.medium + "</b> rounds in the <b>Safe Space</b>."
+		"description": "When <b>Triggered</b>, take less <b>" + config.medium + "</b> rounds in the <b>Safe Space</b>."
 	}
 ];
 newCard.race = "Neutral";
@@ -2366,11 +2366,11 @@ newCard.details =
 [
 	{
 		"title" : "Chivalry", //in attack
-		"description": "&checkmark;When this card is in play, any opposing <b>Male</b> cards attacking a <b>Female</b> card has a <b>" + config.medium + "0%</b> chance of doing minimum damage.",
+		"description": "When this card is in play, any opposing <b>Male</b> cards attacking a <b>Female</b> card has a <b>" + config.medium + "0%</b> chance of doing minimum damage.",
 	},
 	{
 		"title" : "Self-hatred",
-		"description": "&checkmark;When <b>Triggered</b> by a <b>Female</b> card, gain <b>" + config.minor + " Woke Points</b>."
+		"description": "When <b>Triggered</b> by a <b>Female</b> card, gain <b>" + config.minor + " Woke Points</b>."
 	}
 ];
 newCard.race = "Neutral";
@@ -2409,15 +2409,15 @@ newCard.details =
 [
 	{
 		"title" : "Androgyny", 
-		"description": "&checkmark;Attack with a <b>x" + config.minor + "</b> bonus to <b>Attack</b> if target is a <b>Male</b> card.",
+		"description": "Attack with a <b>x" + config.minor + "</b> bonus to <b>Attack</b> if target is a <b>Male</b> card.",
 	},
 	{
 		"title" : "Female Protection",
-		"description": "&checkmark;On play, gain <b>" + config.minor + " Defence</b> for every other <b>Female</b> card in hand."
+		"description": "On play, gain <b>" + config.minor + " Defence</b> for every other <b>Female</b> card in hand."
 	},
 	{
 		"title" : "Emasculation", //in game
-		"description": "&checkmark;Upon <b>Triggering</b> a <b>Male</b> card, <b>" + config.minor + "0%</b> chance to add the card's <b>Woke Rating</b> to <b>Woke Points</b>."
+		"description": "Upon <b>Triggering</b> a <b>Male</b> card, <b>" + config.minor + "0%</b> chance to add the card's <b>Woke Rating</b> to <b>Woke Points</b>."
 	},
 ];
 newCard.race = "Neutral";
@@ -2496,15 +2496,15 @@ newCard.details =
 [
 	{
 		"title" : "White Power",
-		"description": "&checkmark;For every other <b>White</b> card in hand, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
+		"description": "For every other <b>White</b> card in hand, add <b>" + config.minor + "</b> to <b>Attack</b> when attacking."
 	},
 	{
 		"title" : "White Protection",
-		"description": "&checkmark;On play, gain <b>" + config.minor + " Defence</b> for every other <b>White</b> card in hand."
+		"description": "On play, gain <b>" + config.minor + " Defence</b> for every other <b>White</b> card in hand."
 	},
 	{
 		"title" : "Lynch Mob", //in game
-		"description": "&checkmark;Upon <b>Triggering</b> a <b>Minority</b> card, <b>" + config.minor + "0%</b> chance to add the card's <b>Woke Rating</b> to <b>Woke Points</b>."
+		"description": "Upon <b>Triggering</b> a <b>Minority</b> card, <b>" + config.minor + "0%</b> chance to add the card's <b>Woke Rating</b> to <b>Woke Points</b>."
 	},
 ];
 newCard.race = "White";
@@ -2591,15 +2591,15 @@ newCard.details =
 [
 	{
 		"title" : "Superiority in Numbers",
-		"description": "&checkmark;On play, if <b>White</b> cards outnumber <b>Minority</b> cards in hand, gain <b>" + config.minor + " Woke Points</b> for every extra <b>White</b> card."
+		"description": "On play, if <b>White</b> cards outnumber <b>Minority</b> cards in hand, gain <b>" + config.minor + " Woke Points</b> for every extra <b>White</b> card."
 	},
 	{
 		"title" : "White Defence",
-		"description": "&checkmark;Every round, if <b>White</b> cards outnumber <b>Minority</b> cards in hand, gain <b>" + config.minor + " Defence</b> for every extra <b>White</b> card."
+		"description": "Every round, if <b>White</b> cards outnumber <b>Minority</b> cards in hand, gain <b>" + config.minor + " Defence</b> for every extra <b>White</b> card."
 	},
 	{
 		"title" : "White Attack",
-		"description": "&checkmark;If <b>White</b> cards outnumber <b>Minority</b> cards in hand, gain <b>+" + config.minor + "</b> bonus to <b>Attack</b> when attacking."
+		"description": "If <b>White</b> cards outnumber <b>Minority</b> cards in hand, gain <b>+" + config.minor + "</b> bonus to <b>Attack</b> when attacking."
 	}
 ];
 newCard.race = "White";
@@ -2746,11 +2746,11 @@ newCard.details =
 [
 	{
 		"title" : "Toxic Presence",
-		"description": "&checkmark;On play, remove <b>" + config.medium + " Woke Points</b> from your opponent."
+		"description": "On play, remove <b>" + config.medium + " Woke Points</b> from your opponent."
 	},
 	{
 		"title" : "War of Attrition",
-		"description": "&checkmark;Every round, remove <b>" + config.minor + " Likes</b> from your opponent."
+		"description": "Every round, remove <b>" + config.minor + " Likes</b> from your opponent."
 	}
 ];
 newCard.race = "Neutral";
@@ -2797,15 +2797,15 @@ newCard.details =
 [
 	{
 		"title" : "Male Protection",
-		"description": "&checkmark;On play, gain <b>" + config.minor + " Defence</b> for every other <b>Male</b> card in hand."
+		"description": "On play, gain <b>" + config.minor + " Defence</b> for every other <b>Male</b> card in hand."
 	},
 	{
 		"title" : "Vocal Oppression", 
-		"description": "&checkmark;If there is a <b>Micro-aggression</b> card in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
+		"description": "If there is a <b>Micro-aggression</b> card in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
 	},
 	{
 		"title" : "Nobody asked!", //in game
-		"description": "&checkmark;Upon <b>Triggering</b> a <b>Female</b> card, <b>" + config.minor + "0%</b> chance to add the card's <b>Woke Rating</b> to <b>Woke Points</b>."
+		"description": "Upon <b>Triggering</b> a <b>Female</b> card, <b>" + config.minor + "0%</b> chance to add the card's <b>Woke Rating</b> to <b>Woke Points</b>."
 	},
 ];
 newCard.race = "Neutral";
@@ -2921,11 +2921,11 @@ newCard.details =
 [
 	{
 		"title" : "No Punching Down", //in attack
-		"description": "&checkmark;When this card is in play, any opposing cards attacking a card with a lower <b>Woke Rating</b> causes the opponent to lose <b>" + config.minor + " Woke Points</b>.",
+		"description": "When this card is in play, any opposing cards attacking a card with a lower <b>Woke Rating</b> causes the opponent to lose <b>" + config.minor + " Woke Points</b>.",
 	},
 	{
 		"title" : "Troll Termination",
-		"description": "&checkmark;On play, if played opposite a <b>Troll</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
+		"description": "On play, if played opposite a <b>Troll</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
 	}
 ];
 newCard.race = "Neutral";
@@ -2975,11 +2975,11 @@ newCard.details =
 [
 	{
 		"title" : "Chill Order", //in attack
-		"description": "&checkmark;When this card is in play, any opposing cards attacking has a <b>" + config.minor + "0%</b> chance of doing minimum damage.",
+		"description": "When this card is in play, any opposing cards attacking has a <b>" + config.minor + "0%</b> chance of doing minimum damage.",
 	},
 	{
 		"title" : "Extremist Elimination",
-		"description": "&checkmark;On play, if played opposite a <b>Extremist</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
+		"description": "On play, if played opposite a <b>Extremist</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
 	}
 ];
 newCard.race = "Neutral";
@@ -3029,11 +3029,11 @@ newCard.details =
 [
 	{
 		"title" : "Reductio ad Hitlerum", 
-		"description": "&checkmark;If there is a <b>Nazi Card</b> in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
+		"description": "If there is a <b>Nazi Card</b> in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
 	},
 	{
 		"title" : "White Supremacy Wipeout",
-		"description": "&checkmark;On play, if played opposite a <b>White Supremacy</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
+		"description": "On play, if played opposite a <b>White Supremacy</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
 	}
 ];
 newCard.race = "Neutral";
@@ -3103,11 +3103,11 @@ newCard.details =
 [
 	{
 		"title" : "No Kill Like Overkill", 
-		"description": "&checkmark;Every time this card does maximum damage on an <b>Attack</b>, gain <b>" + config.medium + "</b> <b>Woke Points</b>.",
+		"description": "Every time this card does maximum damage on an <b>Attack</b>, gain <b>" + config.medium + "</b> <b>Woke Points</b>.",
 	},
 	{
 		"title" : "Extremism Encouragement",
-		"description": "&checkmark;If this card is in your <b>Hand</b>, <b>Xenophobe</b>, <b>Feminazi</b>, <b>Homophobe</b> and <b>Misogynist</b> cards have a <b>" + config.minor + "0%</b> chance of doing maximum damage."
+		"description": "If this card is in your <b>Hand</b>, <b>Xenophobe</b>, <b>Feminazi</b>, <b>Homophobe</b> and <b>Misogynist</b> cards have a <b>" + config.minor + "0%</b> chance of doing maximum damage."
 	}
 ];
 newCard.race = "Neutral";
@@ -3126,11 +3126,11 @@ newCard.details =
 [
 	{
 		"title" : "Light Touch", 
-		"description": "&checkmark;Every time this card does minimum damage on an <b>Attack</b>, gain <b>" + config.medium + "</b> <b>Woke Points</b>.",
+		"description": "Every time this card does minimum damage on an <b>Attack</b>, gain <b>" + config.medium + "</b> <b>Woke Points</b>.",
 	},
 	{
 		"title" : "Everything in Moderation",
-		"description": "&checkmark;If this card is in your <b>Hand</b>, <b>Xenophobe</b>, <b>Feminazi</b>, <b>Homophobe</b> and <b>Misogynist</b> cards in your opponent's <b>Hand</b> have a <b>" + config.minor + "0%</b> chance of doing minimum damage."
+		"description": "If this card is in your <b>Hand</b>, <b>Xenophobe</b>, <b>Feminazi</b>, <b>Homophobe</b> and <b>Misogynist</b> cards in your opponent's <b>Hand</b> have a <b>" + config.minor + "0%</b> chance of doing minimum damage."
 	}
 ];
 newCard.race = "Neutral";
@@ -3149,11 +3149,11 @@ newCard.details =
 [
 	{
 		"title" : "Targetted Insult", 
-		"description": "&checkmark;If there is a <b>Ad Hominem</b> card in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
+		"description": "If there is a <b>Ad Hominem</b> card in hand, gain a <b>x" + config.minor + "</b> bonus to <b>Attack</b>.",
 	},
 	{
 		"title" : "Snowflake Slaughter",
-		"description": "&checkmark;On play, if played opposite a <b>Snowflake</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
+		"description": "On play, if played opposite a <b>Snowflake</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
 	}
 ];
 newCard.race = "Neutral";
@@ -3223,15 +3223,15 @@ newCard.details =
 [
 	{
 		"title" : "Enhanced Recovery", //in game
-		"description": "&checkmark;Every round, all <b>Minority</b> cards in the <b>Safe Space</b> recover an additional <b>" + config.minor + "</b> rounds faster."
+		"description": "Every round, all <b>Minority</b> cards in the <b>Safe Space</b> recover an additional <b>" + config.minor + "</b> rounds faster."
 	},
 	{
 		"title" : "Sacrificial Solidarity", 
-		"description": "&checkmark;Upon being <b>Triggered</b>, all <b>Minority</b> cards gain <b>" + config.medium + "</b> to Defence."
+		"description": "Upon being <b>Triggered</b>, all <b>Minority</b> cards gain <b>" + config.medium + "</b> to Defence."
 	},
 	{
 		"title" : "Xenophobe X-tinction",
-		"description": "&checkmark;On play, if played opposite a <b>Xenophobe</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
+		"description": "On play, if played opposite a <b>Xenophobe</b> card, that card has a <b>" + config.medium + "0%</b> chance of being <b>Triggered</b>."
 	}
 ];
 newCard.race = "Minority";
