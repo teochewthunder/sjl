@@ -175,13 +175,12 @@
 
 .card_xs_container .title
 {
-	width: 50%;
+	width: 60%;
 	height: 3em;
-	font-size: 2.5em;
-	font-weight: bold;
+	font-size: 2.75em;
+	font-weight: normal;
 	text-align: left;
 	float: left;
-	font-variant: small-caps;
 	padding: 2px;
 	color: #FFFFFF;
 }
